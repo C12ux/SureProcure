@@ -1,52 +1,45 @@
 <x-guest-layout>
-    <form method="POST" action="{{ route('register') }}">
+    <h1 class="heading-form">Create your account</h1>
+    <p class="mt-2 text-base text-ink/70">Set up your company, then lodge purchase requisitions. A subscription is needed to submit requests.</p>
+
+    <form method="POST" action="{{ route('register') }}" class="mt-8 space-y-5">
         @csrf
 
-        <!-- Name -->
         <div>
-            <x-input-label for="name" :value="__('Name')" />
-            <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
-            <x-input-error :messages="$errors->get('name')" class="mt-2" />
+            <x-input-label for="name" value="Your name" />
+            <x-text-input id="name" class="mt-1.5" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
+            <x-input-error :messages="$errors->get('name')" />
         </div>
 
-        <!-- Email Address -->
-        <div class="mt-4">
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+        <div>
+            <x-input-label for="company_name" value="Company name" />
+            <x-text-input id="company_name" class="mt-1.5" type="text" name="company_name" :value="old('company_name')" required autocomplete="organization" />
+            <x-input-error :messages="$errors->get('company_name')" />
         </div>
 
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
-
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="new-password" />
-
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
+        <div>
+            <x-input-label for="email" value="Work email" />
+            <x-text-input id="email" class="mt-1.5" type="email" name="email" :value="old('email')" required autocomplete="username" />
+            <x-input-error :messages="$errors->get('email')" />
         </div>
 
-        <!-- Confirm Password -->
-        <div class="mt-4">
-            <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
-
-            <x-text-input id="password_confirmation" class="block mt-1 w-full"
-                            type="password"
-                            name="password_confirmation" required autocomplete="new-password" />
-
-            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
+        <div>
+            <x-input-label for="password" value="Password" />
+            <x-text-input id="password" class="mt-1.5" type="password" name="password" required autocomplete="new-password" />
+            <x-input-error :messages="$errors->get('password')" />
         </div>
 
-        <div class="flex items-center justify-end mt-4">
-            <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('login') }}">
-                {{ __('Already registered?') }}
-            </a>
-
-            <x-primary-button class="ms-4">
-                {{ __('Register') }}
-            </x-primary-button>
+        <div>
+            <x-input-label for="password_confirmation" value="Confirm password" />
+            <x-text-input id="password_confirmation" class="mt-1.5" type="password" name="password_confirmation" required autocomplete="new-password" />
+            <x-input-error :messages="$errors->get('password_confirmation')" />
         </div>
+
+        <x-primary-button class="w-full">Create account</x-primary-button>
     </form>
+
+    <p class="mt-8 text-sm">
+        Already registered? <a href="{{ route('login') }}" class="auth-link">Log in</a>
+    </p>
+    <p class="mt-3 text-sm text-ink/70">Vendors and procurement officers join by invitation.</p>
 </x-guest-layout>

@@ -1,3 +1,85 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* =====================================================================
+   SureProcure design layer
+   Colors and fonts live in tailwind.config.js. Reusable patterns live here.
+   Page-specific layout (grid, gap, margins) stays as utilities in Blade.
+   ===================================================================== */
+
+@layer base {
+    /* Visible keyboard focus on every public-page background (follows the text color). */
+    .marketing a:focus-visible,
+    .marketing button:focus-visible {
+        outline: 2px solid currentColor;
+        outline-offset: 3px;
+        border-radius: 6px;
+    }
+}
+
+@layer components {
+
+    /* ---- Structure ---- */
+    .page-container { @apply mx-auto max-w-7xl px-6 lg:px-10; }
+
+    /* ---- Buttons: combine  .btn + size + variant  ---- */
+    .btn          { @apply inline-block rounded-full text-center font-semibold transition-colors; }
+    .btn-sm       { @apply px-5 py-2.5 text-sm; }
+    .btn-md       { @apply px-6 py-3 text-sm; }
+    .btn-lg       { @apply px-7 py-3.5 text-base; }
+
+    .btn-light         { @apply bg-mist text-ink hover:bg-white; }                                   /* on purple / dark */
+    .btn-outline-light { @apply border border-mist/50 text-mist-50 hover:border-mist hover:bg-white/5; }
+    .btn-solid         { @apply bg-jackson text-mist-50 hover:bg-jackson-deep; }                      /* on light */
+    .btn-outline-dark  { @apply border border-ink/30 hover:border-ink hover:bg-ink/5; }
+
+    .link-quiet { @apply px-3 py-2 text-sm font-semibold text-mist-50 hover:text-white; }
+    .nav-link   { @apply hover:text-white; }
+
+    /* ---- Type ---- */
+    .heading-hero    { @apply max-w-3xl font-display text-[clamp(2.5rem,5.6vw,4.6rem)] font-extrabold leading-[1.02] tracking-[-0.025em] text-mist-50; }
+    .heading-section { @apply font-display text-4xl font-extrabold leading-tight tracking-[-0.02em] sm:text-5xl; }
+    .heading-column  { @apply font-display text-3xl font-bold tracking-tight text-mist-50; }
+    .heading-step    { @apply font-display text-2xl font-bold tracking-tight; }
+    .heading-form    { @apply font-display text-3xl font-extrabold tracking-tight sm:text-4xl; }
+    .lead            { @apply text-lg leading-relaxed; }
+
+    /* ---- Forms (used by the Breeze components: x-text-input, x-input-label, x-input-error) ---- */
+    .field-label { @apply block text-sm font-semibold text-ink; }
+    .field-input { @apply block w-full rounded-xl border border-ink/25 bg-white px-4 py-3 text-base text-ink shadow-none placeholder:text-ink/40 focus:border-jackson focus:ring-2 focus:ring-jackson/30; }
+    .field-error { @apply mt-1.5 space-y-1 text-sm font-medium text-danger-deep; }
+    .field-check { @apply h-4 w-4 rounded border-ink/30 text-jackson focus:ring-jackson; }
+    .auth-link   { @apply font-semibold text-jackson underline decoration-jackson/30 underline-offset-4 hover:decoration-jackson; }
+
+    /* ---- Bid evaluation sample card ---- */
+    .eval-card        { @apply rounded-3xl bg-mist-50 p-6 text-ink shadow-2xl shadow-ink/40 sm:p-8; }
+    .chip-status      { @apply inline-flex shrink-0 items-center gap-2 rounded-full bg-mist-200 px-3 py-1.5 text-xs font-semibold; }
+    .chip-recommended { @apply inline-flex items-center gap-1 rounded-full bg-success px-2 py-0.5 text-xs font-bold text-ink; }
+    .bar-track        { @apply mt-3 h-1.5 overflow-hidden rounded-full bg-mist-200; }
+    .bar-fill         { @apply h-full rounded-full bg-jackson/45; }
+    .bar-fill--best   { @apply bg-jackson; }
+
+    /* ---- How it works ---- */
+    .step-row         { @apply flex gap-6 border-t border-ink/15 py-9 sm:gap-10; }
+    .step-row:last-child { @apply border-b; }
+    .step-number      { @apply w-10 shrink-0 font-display text-4xl font-extrabold tabular-nums text-jackson sm:w-14 sm:text-5xl; }
+
+    /* ---- Audience columns ---- */
+    .audience-col     { @apply py-16 lg:px-12 lg:py-24; }
+    .audience-col:first-child { @apply lg:pl-0; }
+    .audience-col:last-child  { @apply lg:pr-0; }
+    .audience-list    { @apply mt-8 space-y-3.5 text-base; }
+    .audience-check   { @apply mt-1 h-4 w-4 text-mist-50; }
+    .audience-check--success { @apply text-success; }
+    .audience-note    { @apply mt-8 text-sm leading-relaxed text-mist/80; }
+}
+
+/* The one motion on the public page: score bars fill in once on load. */
+.bar-fill {
+    transform-origin: left center;
+    animation: bar-grow 1000ms cubic-bezier(.2, .8, .2, 1) both;
+    animation-delay: var(--d, 350ms);
+}
+@keyframes bar-grow { from { transform: scaleX(0); } }
+@media (prefers-reduced-motion: reduce) { .bar-fill { animation: none; } }
