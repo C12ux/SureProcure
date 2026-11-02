@@ -10,6 +10,7 @@ use App\Models\Quotation;
 use App\Models\Vendor;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Validation\Rules\Password;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -34,5 +35,10 @@ class AppServiceProvider extends ServiceProvider
             'purchase_order'       => PurchaseOrder::class,
             'payment'              => Payment::class,
         ]);
+
+        // Password rule used everywhere Rules\Password::defaults() is called
+        // (register, reset password, change password): at least 8 characters
+        // and it must mix letters, numbers and symbols.
+        Password::defaults(fn () => Password::min(8)->letters()->numbers()->symbols());
     }
 }
