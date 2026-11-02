@@ -15,7 +15,7 @@
 
         <div>
             <x-input-label for="password" value="Password" />
-            <x-text-input id="password" class="mt-1.5" type="password" name="password" required autocomplete="current-password" />
+            <x-password-input id="password" name="password" class="mt-1.5" required autocomplete="current-password" />
             <x-input-error :messages="$errors->get('password')" />
         </div>
 

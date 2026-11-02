@@ -9,9 +9,14 @@
    ===================================================================== */
 
 @layer base {
-    /* Visible keyboard focus on every public-page background (follows the text color). */
+    /* Alpine hides elements with x-cloak until it has started. */
+    [x-cloak] { display: none !important; }
+
+    /* Visible keyboard focus on every page background (follows the text color). */
     .marketing a:focus-visible,
-    .marketing button:focus-visible {
+    .marketing button:focus-visible,
+    .app a:focus-visible,
+    .app button:focus-visible {
         outline: 2px solid currentColor;
         outline-offset: 3px;
         border-radius: 6px;
@@ -33,6 +38,7 @@
     .btn-outline-light { @apply border border-mist/50 text-mist-50 hover:border-mist hover:bg-white/5; }
     .btn-solid         { @apply bg-jackson text-mist-50 hover:bg-jackson-deep; }                      /* on light */
     .btn-outline-dark  { @apply border border-ink/30 hover:border-ink hover:bg-ink/5; }
+    .btn-danger        { @apply border border-danger-deep/40 text-danger-deep hover:border-danger-deep hover:bg-danger/10; }
 
     .link-quiet { @apply px-3 py-2 text-sm font-semibold text-mist-50 hover:text-white; }
     .nav-link   { @apply hover:text-white; }
@@ -45,14 +51,15 @@
     .heading-form    { @apply font-display text-3xl font-extrabold tracking-tight sm:text-4xl; }
     .lead            { @apply text-lg leading-relaxed; }
 
-    /* ---- Forms (used by the Breeze components: x-text-input, x-input-label, x-input-error) ---- */
+    /* ---- Forms ---- */
     .field-label { @apply block text-sm font-semibold text-ink; }
     .field-input { @apply block w-full rounded-xl border border-ink/25 bg-white px-4 py-3 text-base text-ink shadow-none placeholder:text-ink/40 focus:border-jackson focus:ring-2 focus:ring-jackson/30; }
     .field-error { @apply mt-1.5 space-y-1 text-sm font-medium text-danger-deep; }
+    .field-hint  { @apply mt-1.5 text-sm text-ink/60; }
     .field-check { @apply h-4 w-4 rounded border-ink/30 text-jackson focus:ring-jackson; }
     .auth-link   { @apply font-semibold text-jackson underline decoration-jackson/30 underline-offset-4 hover:decoration-jackson; }
 
-    /* ---- Bid evaluation sample card ---- */
+    /* ---- Bid evaluation sample card (landing) ---- */
     .eval-card        { @apply rounded-3xl bg-mist-50 p-6 text-ink shadow-2xl shadow-ink/40 sm:p-8; }
     .chip-status      { @apply inline-flex shrink-0 items-center gap-2 rounded-full bg-mist-200 px-3 py-1.5 text-xs font-semibold; }
     .chip-recommended { @apply inline-flex items-center gap-1 rounded-full bg-success px-2 py-0.5 text-xs font-bold text-ink; }
@@ -60,12 +67,12 @@
     .bar-fill         { @apply h-full rounded-full bg-jackson/45; }
     .bar-fill--best   { @apply bg-jackson; }
 
-    /* ---- How it works ---- */
+    /* ---- How it works (landing) ---- */
     .step-row         { @apply flex gap-6 border-t border-ink/15 py-9 sm:gap-10; }
     .step-row:last-child { @apply border-b; }
     .step-number      { @apply w-10 shrink-0 font-display text-4xl font-extrabold tabular-nums text-jackson sm:w-14 sm:text-5xl; }
 
-    /* ---- Audience columns ---- */
+    /* ---- Audience columns (landing) ---- */
     .audience-col     { @apply py-16 lg:px-12 lg:py-24; }
     .audience-col:first-child { @apply lg:pl-0; }
     .audience-col:last-child  { @apply lg:pr-0; }
@@ -73,6 +80,67 @@
     .audience-check   { @apply mt-1 h-4 w-4 text-mist-50; }
     .audience-check--success { @apply text-success; }
     .audience-note    { @apply mt-8 text-sm leading-relaxed text-mist/80; }
+
+    /* =================================================================
+       APP (signed-in area)
+       ================================================================= */
+
+    /* ---- Sidebar ---- */
+    .side-link         { @apply flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-semibold text-mist transition-colors hover:bg-white/10 hover:text-mist-50; }
+    .side-link--active { @apply bg-white/15 text-mist-50; }
+
+    /* ---- Page + cards ---- */
+    .page-title      { @apply font-display text-2xl font-extrabold tracking-tight sm:text-3xl; }
+    .app-card        { @apply rounded-2xl border border-ink/10 bg-white p-6; }
+    .app-card--flush { @apply overflow-hidden p-0; }
+    .app-card-title  { @apply font-display text-lg font-bold tracking-tight; }
+
+    .stat       { @apply rounded-2xl border border-ink/10 bg-white p-5 transition-colors; }
+    .stat-value { @apply font-display text-4xl font-extrabold tabular-nums tracking-tight; }
+    .stat-label { @apply mt-1 text-sm text-ink/70; }
+    .stat--attention { @apply border-caution/60 bg-caution/10; }
+
+    .empty-state { @apply flex flex-col items-center justify-center rounded-2xl border border-dashed border-ink/20 px-6 py-16 text-center; }
+
+    /* ---- Status badges ---- */
+    .badge     { @apply inline-flex items-center gap-2 whitespace-nowrap rounded-full px-3 py-1 text-xs font-semibold; }
+    .badge-dot { @apply h-2 w-2 rounded-full bg-current; }
+    .badge--neutral   { @apply bg-mist-200 text-ink; }
+    .badge--neutral .badge-dot   { @apply bg-ink/40; }
+    .badge--info      { @apply bg-jackson/10 text-jackson; }
+    .badge--attention { @apply bg-caution/20 text-ink; }
+    .badge--attention .badge-dot { @apply bg-caution; }
+    .badge--success   { @apply bg-success/25 text-ink; }
+    .badge--success .badge-dot   { @apply bg-ink; }
+    .badge--danger    { @apply bg-danger/10 text-danger-deep; }
+
+    /* ---- Alerts ---- */
+    .alert          { @apply mb-6 rounded-xl border px-4 py-3 text-sm font-medium; }
+    .alert--success { @apply border-success/60 bg-success/20 text-ink; }
+    .alert--info    { @apply border-jackson/25 bg-jackson/10 text-ink; }
+    .alert--warning { @apply border-caution/60 bg-caution/15 text-ink; }
+    .alert--error   { @apply border-danger/40 bg-danger/10 text-danger-deep; }
+
+    /* ---- Tables + tabs ---- */
+    .data-table { @apply w-full text-left text-sm; }
+    .data-table th { @apply whitespace-nowrap px-4 py-3 text-xs font-semibold text-ink/60; }
+    .data-table td { @apply px-4 py-4 align-top; }
+    .data-table tbody tr { @apply border-t border-ink/10; }
+    .data-table th:first-child, .data-table td:first-child { @apply pl-6; }
+    .data-table th:last-child, .data-table td:last-child { @apply pr-6; }
+
+    .tab         { @apply rounded-full px-4 py-2 text-sm font-semibold text-ink/70 hover:bg-mist-200; }
+    .tab--active { @apply bg-ink text-mist-50 hover:bg-ink; }
+
+    /* ---- Detail lists ---- */
+    .detail-label { @apply text-sm text-ink/60; }
+    .detail-value { @apply mt-0.5 font-medium; }
+
+    /* ---- Request progress tracker ---- */
+    .progress { @apply grid grid-cols-2 gap-x-3 gap-y-4 sm:grid-cols-4 lg:grid-cols-7; }
+    .progress-step          { @apply flex items-center gap-1.5 border-t-4 border-ink/15 pt-3 text-sm text-ink/60; }
+    .progress-step--done    { @apply border-jackson/40 text-ink; }
+    .progress-step--current { @apply border-jackson font-semibold text-jackson; }
 }
 
 /* The one motion on the public page: score bars fill in once on load. */

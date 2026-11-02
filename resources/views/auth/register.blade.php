@@ -2,7 +2,7 @@
     <h1 class="heading-form">Create your account</h1>
     <p class="mt-2 text-base text-ink/70">Set up your company, then lodge purchase requisitions. A subscription is needed to submit requests.</p>
 
-    <form method="POST" action="{{ route('register') }}" class="mt-8 space-y-5">
+    <form method="POST" action="{{ route('register') }}" class="mt-8 space-y-5" x-data="{ pw: '', confirm: '' }">
         @csrf
 
         <div>
@@ -25,13 +25,17 @@
 
         <div>
             <x-input-label for="password" value="Password" />
-            <x-text-input id="password" class="mt-1.5" type="password" name="password" required autocomplete="new-password" />
+            <x-password-input id="password" name="password" model="pw" :checklist="true" class="mt-1.5" required autocomplete="new-password" />
             <x-input-error :messages="$errors->get('password')" />
         </div>
 
         <div>
             <x-input-label for="password_confirmation" value="Confirm password" />
-            <x-text-input id="password_confirmation" class="mt-1.5" type="password" name="password_confirmation" required autocomplete="new-password" />
+            <x-password-input id="password_confirmation" name="password_confirmation" model="confirm" class="mt-1.5" required autocomplete="new-password" />
+            <p class="field-hint" x-show="confirm.length > 0" x-cloak>
+                <span x-show="confirm === pw" class="font-medium text-ink">Passwords match</span>
+                <span x-show="confirm !== pw" class="font-medium text-danger-deep">Passwords do not match yet</span>
+            </p>
             <x-input-error :messages="$errors->get('password_confirmation')" />
         </div>
 
