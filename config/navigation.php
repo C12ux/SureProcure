@@ -23,5 +23,8 @@ return [
 
     'admin' => [
         ['label' => 'Dashboard', 'route' => 'dashboard', 'icon' => 'home', 'match' => 'dashboard'],
+        ['label' => 'Requests', 'route' => 'admin.requisitions.index', 'icon' => 'document', 'match' => 'admin.requisitions.*'],
+        ['label' => 'Customers', 'route' => 'admin.customers.index', 'icon' => 'building', 'match' => 'admin.customers.*'],
+        ['label' => 'Invitations', 'route' => 'admin.invitations.index', 'icon' => 'mail', 'match' => 'admin.invitations.*'],
     ],
 ];
