@@ -2,10 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\OrganizationType;
 use App\Enums\PrStatus;
 use App\Enums\UserRole;
+use App\Models\Invitation;
+use App\Models\Organization;
+use App\Models\PrStatusHistory;
 use App\Models\PurchaseRequisition;
 use App\Models\User;
+use App\Models\Vendor;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -17,6 +22,7 @@ class DashboardController extends Controller
 
         return match ($user->role) {
             UserRole::Client => $this->customer($user),
+            UserRole::Admin => $this->admin($user),
             default => view('dashboard.placeholder', ['role' => $user->role]),
         };
     }
@@ -63,5 +69,36 @@ class DashboardController extends Controller
             'attention' => $attention,
             'recent' => $recent,
         ]);
+    }
+
+    private function admin(User $user): View
+    {
+        $active = PrStatus::active();
+
+        $stats = [
+            'unassigned' => PurchaseRequisition::whereNull('assigned_officer_id')->withStatus(...$active)->count(),
+            'active' => PurchaseRequisition::withStatus(...$active)->count(),
+            'customers' => Organization::where('type', OrganizationType::Client->value)->count(),
+            'officers' => User::where('role', UserRole::ProcurementOfficer->value)->where('is_active', true)->count(),
+            'vendors' => Vendor::count(),
+            'invites' => Invitation::pending()->count(),
+        ];
+
+        $needsOfficer = PurchaseRequisition::with('organization')
+            ->whereNull('assigned_officer_id')
+            ->withStatus(...$active)
+            ->oldest('submitted_at')
+            ->limit(6)
+            ->get();
+
+        // Customers' private drafts are left out of the staff activity feed.
+        $activity = PrStatusHistory::with(['purchaseRequisition.organization', 'changedBy'])
+            ->whereHas('purchaseRequisition')
+            ->where('to_status', '!=', PrStatus::Draft->value)
+            ->latest('id')
+            ->limit(8)
+            ->get();
+
+        return view('dashboard.admin', compact('user', 'stats', 'needsOfficer', 'activity'));
     }
 }

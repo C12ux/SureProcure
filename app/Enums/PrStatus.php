@@ -21,7 +21,7 @@ enum PrStatus: string
     case Rejected = 'rejected';
     case Cancelled = 'cancelled';
 
-    /** Friendly names shown to people. */
+    /** Names shown to customers. */
     public function label(): string
     {
         return match ($this) {
@@ -37,6 +37,16 @@ enum PrStatus: string
             self::Closed => 'Closed',
             self::Rejected => 'Rejected',
             self::Cancelled => 'Cancelled',
+        };
+    }
+
+    /** Names shown to SureProcure staff (admins and officers). */
+    public function staffLabel(): string
+    {
+        return match ($this) {
+            self::NeedsClarification => 'Needs customer input',
+            self::AwaitingClientReview => 'Awaiting customer approval',
+            default => $this->label(),
         };
     }
 
@@ -73,7 +83,7 @@ enum PrStatus: string
         };
     }
 
-    /** Filter groups used by the requisition list and dashboard counts. */
+    /** Filter groups used by lists and dashboard counts. */
     public static function groups(): array
     {
         return [
@@ -82,6 +92,15 @@ enum PrStatus: string
             'attention' => [self::NeedsClarification, self::AwaitingClientReview],
             'completed' => [self::Approved, self::PoIssued, self::Closed],
             'closed_out' => [self::Rejected, self::Cancelled],
+        ];
+    }
+
+    /** Requests that are being worked on: submitted, and not finished or abandoned. */
+    public static function active(): array
+    {
+        return [
+            self::Submitted, self::InReview, self::NeedsClarification, self::Sourcing,
+            self::BidEvaluation, self::AwaitingClientReview, self::Approved, self::PoIssued,
         ];
     }
 
