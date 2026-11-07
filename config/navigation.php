@@ -15,6 +15,7 @@ return [
 
     'vendor' => [
         ['label' => 'Dashboard', 'route' => 'dashboard', 'icon' => 'home', 'match' => 'dashboard'],
+        ['label' => 'Accreditation', 'route' => 'vendor.accreditation.show', 'icon' => 'shield', 'match' => 'vendor.accreditation.*'],
     ],
 
     'procurement_officer' => [
@@ -24,6 +25,7 @@ return [
     'admin' => [
         ['label' => 'Dashboard', 'route' => 'dashboard', 'icon' => 'home', 'match' => 'dashboard'],
         ['label' => 'Requests', 'route' => 'admin.requisitions.index', 'icon' => 'document', 'match' => 'admin.requisitions.*'],
+        ['label' => 'Vendors', 'route' => 'admin.vendors.index', 'icon' => 'shield', 'match' => 'admin.vendors.*'],
         ['label' => 'Customers', 'route' => 'admin.customers.index', 'icon' => 'building', 'match' => 'admin.customers.*'],
         ['label' => 'Invitations', 'route' => 'admin.invitations.index', 'icon' => 'mail', 'match' => 'admin.invitations.*'],
     ],

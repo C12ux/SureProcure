@@ -12,6 +12,9 @@
         <a href="{{ route('admin.requisitions.index', ['status' => 'unassigned']) }}" class="block rounded-2xl">
             <x-stat label="Requests needing an officer" :value="$stats['unassigned']" :tone="$stats['unassigned'] > 0 ? 'attention' : 'neutral'" />
         </a>
+        <a href="{{ route('admin.vendors.index', ['status' => 'review']) }}" class="block rounded-2xl">
+            <x-stat label="Vendors awaiting review" :value="$stats['vendors_review']" :tone="$stats['vendors_review'] > 0 ? 'attention' : 'neutral'" />
+        </a>
         <a href="{{ route('admin.requisitions.index') }}" class="block rounded-2xl">
             <x-stat label="Active requests" :value="$stats['active']" />
         </a>
@@ -19,7 +22,6 @@
             <x-stat label="Customers" :value="$stats['customers']" />
         </a>
         <div><x-stat label="Procurement officers" :value="$stats['officers']" /></div>
-        <div><x-stat label="Vendors" :value="$stats['vendors']" /></div>
         <a href="{{ route('admin.invitations.index') }}" class="block rounded-2xl">
             <x-stat label="Pending invitations" :value="$stats['invites']" />
         </a>

@@ -3,10 +3,13 @@
 use App\Http\Controllers\Admin\CustomerController as AdminCustomerController;
 use App\Http\Controllers\Admin\InvitationController as AdminInvitationController;
 use App\Http\Controllers\Admin\RequisitionController as AdminRequisitionController;
+use App\Http\Controllers\Admin\VendorController as AdminVendorController;
 use App\Http\Controllers\Client\RequisitionController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\InvitationAcceptController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Vendor\AccreditationController;
 use App\Http\Middleware\EnsureUserRole;
 use Illuminate\Support\Facades\Route;
 
@@ -23,6 +26,12 @@ Route::get('/dashboard', DashboardController::class)
 Route::middleware('throttle:10,1')->group(function () {
     Route::get('/invitations/{token}', [InvitationAcceptController::class, 'show'])->name('invitations.accept');
     Route::post('/invitations/{token}', [InvitationAcceptController::class, 'store'])->name('invitations.accept.store');
+});
+
+// ---- Documents (any signed-in user; the policy decides) -------------------
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/documents/{document}', [DocumentController::class, 'show'])->name('documents.show');
+    Route::delete('/documents/{document}', [DocumentController::class, 'destroy'])->name('documents.destroy');
 });
 
 // ---- Customer area ----------------------------------------------------
@@ -43,6 +52,22 @@ Route::middleware(['auth', 'verified', EnsureUserRole::class.':client'])
         Route::delete('/requisitions/{requisition}', 'destroy')->name('requisitions.destroy');
     });
 
+// ---- Vendor area ------------------------------------------------------
+Route::middleware(['auth', 'verified', EnsureUserRole::class.':vendor'])
+    ->prefix('vendor/accreditation')
+    ->name('vendor.accreditation.')
+    ->controller(AccreditationController::class)
+    ->group(function () {
+        Route::get('/', 'show')->name('show');
+        Route::get('/company', 'company')->name('company');
+        Route::put('/company', 'saveCompany')->name('company.save');
+        Route::get('/capability', 'capability')->name('capability');
+        Route::put('/capability', 'saveCapability')->name('capability.save');
+        Route::get('/documents', 'documents')->name('documents');
+        Route::post('/documents', 'upload')->name('documents.upload');
+        Route::post('/submit', 'submit')->name('submit');
+    });
+
 // ---- Admin area -------------------------------------------------------
 Route::middleware(['auth', 'verified', EnsureUserRole::class.':admin'])
     ->prefix('admin')
@@ -52,6 +77,11 @@ Route::middleware(['auth', 'verified', EnsureUserRole::class.':admin'])
         Route::get('/requisitions/{requisition}', [AdminRequisitionController::class, 'show'])->name('requisitions.show');
         Route::post('/requisitions/{requisition}/assign', [AdminRequisitionController::class, 'assign'])->name('requisitions.assign');
         Route::post('/requisitions/{requisition}/transition', [AdminRequisitionController::class, 'transition'])->name('requisitions.transition');
+
+        Route::get('/vendors', [AdminVendorController::class, 'index'])->name('vendors.index');
+        Route::get('/vendors/{vendor}', [AdminVendorController::class, 'show'])->name('vendors.show');
+        Route::post('/vendors/{vendor}/decision', [AdminVendorController::class, 'decide'])->name('vendors.decide');
+        Route::post('/documents/{document}/review', [AdminVendorController::class, 'reviewDocument'])->name('documents.review');
 
         Route::get('/customers', AdminCustomerController::class)->name('customers.index');
 
