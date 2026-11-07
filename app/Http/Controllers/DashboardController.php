@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\AccreditationStatus;
 use App\Enums\OrganizationType;
 use App\Enums\PrStatus;
 use App\Enums\UserRole;
@@ -11,6 +12,7 @@ use App\Models\PrStatusHistory;
 use App\Models\PurchaseRequisition;
 use App\Models\User;
 use App\Models\Vendor;
+use App\Support\VendorAccreditation;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -23,6 +25,7 @@ class DashboardController extends Controller
         return match ($user->role) {
             UserRole::Client => $this->customer($user),
             UserRole::Admin => $this->admin($user),
+            UserRole::Vendor => $this->vendor($user),
             default => view('dashboard.placeholder', ['role' => $user->role]),
         };
     }
@@ -78,9 +81,9 @@ class DashboardController extends Controller
         $stats = [
             'unassigned' => PurchaseRequisition::whereNull('assigned_officer_id')->withStatus(...$active)->count(),
             'active' => PurchaseRequisition::withStatus(...$active)->count(),
+            'vendors_review' => Vendor::where('accreditation_status', AccreditationStatus::UnderReview->value)->count(),
             'customers' => Organization::where('type', OrganizationType::Client->value)->count(),
             'officers' => User::where('role', UserRole::ProcurementOfficer->value)->where('is_active', true)->count(),
-            'vendors' => Vendor::count(),
             'invites' => Invitation::pending()->count(),
         ];
 
@@ -100,5 +103,16 @@ class DashboardController extends Controller
             ->get();
 
         return view('dashboard.admin', compact('user', 'stats', 'needsOfficer', 'activity'));
+    }
+
+    private function vendor(User $user): View
+    {
+        $vendor = $user->organizations->first()?->vendor;
+
+        return view('dashboard.vendor', [
+            'user' => $user,
+            'vendor' => $vendor,
+            'accreditation' => $vendor ? new VendorAccreditation($vendor) : null,
+        ]);
     }
 }

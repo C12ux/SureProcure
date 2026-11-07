@@ -22,21 +22,21 @@ class VendorPolicy extends BasePolicy
             || $this->isVendorMember($user, $vendor, ...OrgRole::cases());
     }
 
-    /** Vendor edits its own data, except while it is under review. */
+    /** A vendor edits its application only before it is submitted (or after a rejection). Admins always can. */
     public function update(User $user, Vendor $vendor): bool
     {
         if ($user->isAdmin()) {
             return true;
         }
 
-        return $vendor->accreditation_status !== AccreditationStatus::UnderReview
+        return in_array($vendor->accreditation_status, [AccreditationStatus::Pending, AccreditationStatus::Rejected], true)
             && $this->isVendorMember($user, $vendor, OrgRole::Owner, OrgRole::Approver);
     }
 
-    /** Accredit / reject. (Supplier accreditation is a service partners can offer.) */
+    /** Approve, request changes, reject. Admin only for now. */
     public function review(User $user, Vendor $vendor): bool
     {
-        return $user->isAdmin() || $this->isApprovedOfficer($user);
+        return $user->isAdmin();
     }
 
     public function delete(User $user, Vendor $vendor): bool

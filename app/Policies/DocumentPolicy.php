@@ -47,11 +47,10 @@ class DocumentPolicy extends BasePolicy
         };
     }
 
-    /** Mark a document verified/rejected. Partner documents are admin-only. */
+    /** Mark a document verified or rejected. Admin only for now. */
     public function verify(User $user, Document $document): bool
     {
-        return $user->isAdmin()
-            || ($this->isApprovedOfficer($user) && $document->documentable instanceof Vendor);
+        return $user->isAdmin();
     }
 
     /** Uploader may remove their own file until it has been reviewed. */

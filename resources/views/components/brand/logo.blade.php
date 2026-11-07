@@ -7,11 +7,13 @@
       logo.png        your logo as designed for LIGHT backgrounds   (required for the PNG to show)
       logo-light.png  a light/white version for DARK backgrounds    (optional)
 
-    If only logo.png exists, on dark backgrounds it sits inside a light pill so it stays readable.
-    If neither file exists, the built-in SVG mark is shown.
+    The PNG is an icon, so the "SureProcure" wordmark is written next to it.
+    If your PNG ever includes the name itself, pass :wordmark="false".
+    If only logo.png exists, on dark backgrounds the icon sits inside a light pill so it stays readable.
+    If neither file exists, the built-in SVG mark and name are shown.
     Size: pass height="h-10" (default h-9).
 --}}
-@props(['on' => 'light', 'height' => 'h-9'])
+@props(['on' => 'light', 'height' => 'h-9', 'wordmark' => true])
 
 @php
     $forLight = 'images/logo.png';
@@ -28,10 +30,14 @@
 @endphp
 
 @if ($src)
-    <span {{ $attributes->merge(['class' => 'inline-flex items-center']) }}>
+    <span {{ $attributes->merge(['class' => 'inline-flex items-center gap-3']) }}>
         <span class="inline-flex items-center {{ $needsPill ? 'rounded-xl bg-mist-50 px-3 py-1.5' : '' }}">
-            <img src="{{ asset($src) }}" alt="SureProcure" class="{{ $height }} w-auto">
+            {{-- The name is written beside the icon, so the image itself needs no alt text --}}
+            <img src="{{ asset($src) }}" alt="{{ $wordmark ? '' : 'SureProcure' }}" class="{{ $height }} w-auto">
         </span>
+        @if ($wordmark)
+            <span class="font-display text-xl font-bold tracking-tight">SureProcure</span>
+        @endif
     </span>
 @else
     <span {{ $attributes->merge(['class' => 'inline-flex items-center gap-2.5']) }}>
