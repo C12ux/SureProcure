@@ -20,6 +20,7 @@ return [
 
     'procurement_officer' => [
         ['label' => 'Dashboard', 'route' => 'dashboard', 'icon' => 'home', 'match' => 'dashboard'],
+        ['label' => 'Requests', 'route' => 'officer.requisitions.index', 'icon' => 'document', 'match' => 'officer.*'],
     ],
 
     'admin' => [

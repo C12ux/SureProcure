@@ -5,9 +5,13 @@ use App\Http\Controllers\Admin\InvitationController as AdminInvitationController
 use App\Http\Controllers\Admin\RequisitionController as AdminRequisitionController;
 use App\Http\Controllers\Admin\VendorController as AdminVendorController;
 use App\Http\Controllers\Client\RequisitionController;
+use App\Http\Controllers\Client\ReviewController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\InvitationAcceptController;
+use App\Http\Controllers\Officer\EvaluationController as OfficerEvaluationController;
+use App\Http\Controllers\Officer\QuotationController as OfficerQuotationController;
+use App\Http\Controllers\Officer\RequisitionController as OfficerRequisitionController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Vendor\AccreditationController;
 use App\Http\Middleware\EnsureUserRole;
@@ -50,6 +54,10 @@ Route::middleware(['auth', 'verified', EnsureUserRole::class.':client'])
         Route::post('/requisitions/{requisition}/submit', 'submit')->name('requisitions.submit');
         Route::post('/requisitions/{requisition}/cancel', 'cancel')->name('requisitions.cancel');
         Route::delete('/requisitions/{requisition}', 'destroy')->name('requisitions.destroy');
+
+        // Reviewing the officer's bid evaluation, and leaving a note for the officer
+        Route::post('/requisitions/{requisition}/decision', [ReviewController::class, 'decide'])->name('requisitions.decide');
+        Route::post('/requisitions/{requisition}/reply', [ReviewController::class, 'reply'])->name('requisitions.reply');
     });
 
 // ---- Vendor area ------------------------------------------------------
@@ -66,6 +74,26 @@ Route::middleware(['auth', 'verified', EnsureUserRole::class.':vendor'])
         Route::get('/documents', 'documents')->name('documents');
         Route::post('/documents', 'upload')->name('documents.upload');
         Route::post('/submit', 'submit')->name('submit');
+    });
+
+// ---- Procurement officer area -----------------------------------------
+Route::middleware(['auth', 'verified', EnsureUserRole::class.':procurement_officer'])
+    ->prefix('officer')
+    ->name('officer.')
+    ->group(function () {
+        Route::get('/requisitions', [OfficerRequisitionController::class, 'index'])->name('requisitions.index');
+        Route::get('/requisitions/{requisition}', [OfficerRequisitionController::class, 'show'])->name('requisitions.show');
+        Route::post('/requisitions/{requisition}/transition', [OfficerRequisitionController::class, 'transition'])->name('requisitions.transition');
+        Route::post('/requisitions/{requisition}/reply', [OfficerRequisitionController::class, 'reply'])->name('requisitions.reply');
+        Route::post('/requisitions/{requisition}/invitations', [OfficerRequisitionController::class, 'invite'])->name('requisitions.invite');
+        Route::delete('/requisitions/{requisition}/invitations/{invitation}', [OfficerRequisitionController::class, 'uninvite'])->name('requisitions.uninvite');
+        Route::post('/requisitions/{requisition}/purchase-order', [OfficerRequisitionController::class, 'issuePo'])->name('requisitions.po');
+
+        Route::post('/requisitions/{requisition}/quotations', [OfficerQuotationController::class, 'store'])->name('quotations.store');
+        Route::delete('/quotations/{quotation}', [OfficerQuotationController::class, 'destroy'])->name('quotations.destroy');
+
+        Route::get('/requisitions/{requisition}/evaluation', [OfficerEvaluationController::class, 'edit'])->name('evaluation.edit');
+        Route::post('/requisitions/{requisition}/evaluation', [OfficerEvaluationController::class, 'save'])->name('evaluation.save');
     });
 
 // ---- Admin area -------------------------------------------------------

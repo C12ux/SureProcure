@@ -26,6 +26,7 @@ class DashboardController extends Controller
             UserRole::Client => $this->customer($user),
             UserRole::Admin => $this->admin($user),
             UserRole::Vendor => $this->vendor($user),
+            UserRole::ProcurementOfficer => $this->officer($user),
             default => view('dashboard.placeholder', ['role' => $user->role]),
         };
     }
@@ -103,6 +104,22 @@ class DashboardController extends Controller
             ->get();
 
         return view('dashboard.admin', compact('user', 'stats', 'needsOfficer', 'activity'));
+    }
+
+    private function officer(User $user): View
+    {
+        $mine = fn () => PurchaseRequisition::visibleTo($user)->where('status', '!=', PrStatus::Draft->value);
+
+        $stats = [
+            'action' => $mine()->withStatus(...PrStatus::officerAction())->count(),
+            'waiting' => $mine()->withStatus(...PrStatus::waitingOnCustomer())->count(),
+            'completed' => $mine()->withStatus(PrStatus::Closed)->count(),
+        ];
+
+        $actionList = $mine()->with('organization')->withStatus(...PrStatus::officerAction())->latest('updated_at')->limit(6)->get();
+        $waitingList = $mine()->with('organization')->withStatus(...PrStatus::waitingOnCustomer())->latest('updated_at')->limit(5)->get();
+
+        return view('dashboard.officer', compact('user', 'stats', 'actionList', 'waitingList'));
     }
 
     private function vendor(User $user): View

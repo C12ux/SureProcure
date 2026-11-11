@@ -92,15 +92,24 @@ class RequisitionController extends Controller
     {
         Gate::authorize('view', $requisition);
 
-        $requisition->load(['organization', 'requester', 'officer', 'category', 'items', 'statusHistory.changedBy']);
+        $requisition->load([
+            'organization', 'requester', 'officer', 'category', 'items', 'statusHistory.changedBy',
+            'quotations.vendor.organization', 'bidEvaluation', 'purchaseOrders.vendor.organization',
+        ]);
+
+        // Customers only see the evaluation once the officer has sent it (never drafts).
+        $evaluation = $requisition->bidEvaluation;
+        $evaluation = $evaluation && Gate::allows('view', $evaluation) ? $evaluation : null;
 
         return view('requisitions.show', [
             'requisition' => $requisition,
+            'evaluation' => $evaluation,
             'can' => [
                 'update' => Gate::allows('update', $requisition),
                 'submit' => Gate::allows('transition', [$requisition, PrStatus::Submitted]),
                 'cancel' => Gate::allows('transition', [$requisition, PrStatus::Cancelled]),
                 'delete' => Gate::allows('delete', $requisition),
+                'decide' => $evaluation ? Gate::allows('decide', $evaluation) : false,
             ],
         ]);
     }
