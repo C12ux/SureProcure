@@ -104,6 +104,18 @@ enum PrStatus: string
         ];
     }
 
+    /** Requests that are waiting for the procurement officer to do something. */
+    public static function officerAction(): array
+    {
+        return [self::InReview, self::Sourcing, self::BidEvaluation, self::Approved, self::PoIssued];
+    }
+
+    /** Requests that are waiting for the customer. */
+    public static function waitingOnCustomer(): array
+    {
+        return [self::NeedsClarification, self::AwaitingClientReview];
+    }
+
     /**
      * The PR workflow. Adjust here if the business flow changes;
      * PurchaseRequisition::transitionTo() enforces it.

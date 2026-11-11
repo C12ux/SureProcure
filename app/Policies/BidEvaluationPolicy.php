@@ -54,15 +54,21 @@ class BidEvaluationPolicy extends BasePolicy
         return $this->update($user, $evaluation);
     }
 
-    /** Client approves or rejects the recommendation. */
+    /** The customer approves or rejects, but only while the request is actually awaiting their approval. */
     public function decide(User $user, BidEvaluation $evaluation): bool
     {
         if ($evaluation->status !== BidEvaluationStatus::Submitted) {
             return false;
         }
 
+        $pr = $evaluation->purchaseRequisition;
+
+        if ($pr->status !== PrStatus::AwaitingClientReview) {
+            return false;
+        }
+
         return $user->isAdmin()
             || ($user->isClient()
-                && $this->hasOrgRole($user, $evaluation->purchaseRequisition->organization, OrgRole::Owner, OrgRole::Approver));
+                && $this->hasOrgRole($user, $pr->organization, OrgRole::Owner, OrgRole::Approver));
     }
 }

@@ -38,9 +38,11 @@
                 <x-requisition-progress :status="$status" />
             </div>
             @if ($status === PrStatus::NeedsClarification)
-                <x-alert type="warning" class="mt-4 mb-0">Your officer asked for more information. Read the latest note in the activity on the right.</x-alert>
+                <x-alert type="warning" class="mt-4 mb-0">Your officer asked for more information. Read their latest note in the activity on the right, then reply with a note below.</x-alert>
+            @elseif ($status === PrStatus::AwaitingClientReview && $can['decide'])
+                <x-alert type="warning" class="mt-4 mb-0">Your officer finished evaluating the bids. Review the recommendation below and approve it, ask for changes, or reject it.</x-alert>
             @elseif ($status === PrStatus::AwaitingClientReview)
-                <x-alert type="warning" class="mt-4 mb-0">Your officer has finished evaluating the bids and is waiting for your approval.</x-alert>
+                <x-alert type="info" class="mt-4 mb-0">The bid evaluation is waiting for an owner or approver at your company to review it.</x-alert>
             @endif
         @endif
     </div>
@@ -48,6 +50,47 @@
     <div class="mt-6 grid gap-6 lg:grid-cols-3">
 
         <div class="space-y-6 lg:col-span-2">
+
+            {{-- Bid evaluation from the officer, with the customer's decision --}}
+            @if ($evaluation)
+                @include('requisitions._evaluation')
+
+                @if ($can['decide'])
+                    <section class="app-card">
+                        <h3 class="app-card-title">Your decision</h3>
+                        <form method="POST" action="{{ route('requisitions.decide', $requisition) }}" class="mt-5 space-y-4"
+                              x-data="{ action: '{{ old('action', '') }}' }">
+                            @csrf
+                            <fieldset>
+                                <legend class="sr-only">Choose a decision</legend>
+                                <div class="space-y-2">
+                                    <label class="flex items-center gap-3 text-sm"><input type="radio" name="action" value="approve" x-model="action" class="field-check rounded-full" required> Approve the recommendation</label>
+                                    <label class="flex items-center gap-3 text-sm"><input type="radio" name="action" value="changes" x-model="action" class="field-check rounded-full"> Ask my officer for changes</label>
+                                    <label class="flex items-center gap-3 text-sm"><input type="radio" name="action" value="reject" x-model="action" class="field-check rounded-full"> Reject</label>
+                                </div>
+                                <x-input-error :messages="$errors->get('action')" />
+                            </fieldset>
+
+                            <div x-show="action !== ''" x-cloak>
+                                <x-input-label for="note" value="Note" />
+                                <textarea id="note" name="note" rows="3" class="field-input mt-1.5">{{ old('note') }}</textarea>
+                                <p class="field-hint" x-show="action === 'changes' || action === 'reject'">Your officer sees this note, so be specific.</p>
+                                <x-input-error :messages="$errors->get('note')" />
+                            </div>
+
+                            <button type="submit" class="btn btn-md btn-solid" x-show="action !== ''" x-cloak>Confirm decision</button>
+                        </form>
+                    </section>
+                @elseif ($evaluation->decision_remarks && in_array($evaluation->status->value, ['approved', 'rejected'], true))
+                    <section class="app-card">
+                        <h3 class="app-card-title">Decision</h3>
+                        <p class="mt-3">{{ $evaluation->decision_remarks }}</p>
+                    </section>
+                @endif
+            @endif
+
+            @include('requisitions._purchase-order')
+
             <section class="app-card">
                 <h3 class="app-card-title">Details</h3>
                 <dl class="mt-5 grid gap-5 sm:grid-cols-2">
@@ -125,22 +168,20 @@
                 @endif
             </section>
 
-            <section class="app-card">
-                <h3 class="app-card-title">Activity</h3>
-                <ol class="mt-5 space-y-5">
-                    @foreach ($requisition->statusHistory->reverse() as $entry)
-                        <li>
-                            <x-status-badge :status="$entry->to_status" />
-                            <p class="mt-2 text-sm text-ink/70">
-                                {{ $entry->created_at->diffForHumans() }}@if ($entry->changedBy), by {{ $entry->changedBy->name }}@endif
-                            </p>
-                            @if ($entry->note)
-                                <p class="mt-1 text-sm">{{ $entry->note }}</p>
-                            @endif
-                        </li>
-                    @endforeach
-                </ol>
-            </section>
+            @if ($requisition->officer && ! $status->isTerminal() && $status !== PrStatus::Draft)
+                <section class="app-card">
+                    <h3 class="app-card-title">Message your officer</h3>
+                    <form method="POST" action="{{ route('requisitions.reply', $requisition) }}" class="mt-4 space-y-3">
+                        @csrf
+                        <label class="sr-only" for="message">Message</label>
+                        <textarea id="message" name="message" rows="3" class="field-input" required></textarea>
+                        <x-input-error :messages="$errors->get('message')" />
+                        <button type="submit" class="btn btn-md btn-outline-dark">Send note</button>
+                    </form>
+                </section>
+            @endif
+
+            @include('requisitions._activity')
         </div>
     </div>
 </x-app-layout>
