@@ -49,6 +49,10 @@
             <p class="mt-3 text-sm text-ink/70">Total awarded value: <span class="font-semibold tabular-nums text-ink">PHP {{ number_format($stats['awarded_value'], 2) }}</span></p>
         @endif
 
+        @if ($metrics['has_data'])
+            @include('vendor._metrics')
+        @endif
+
         <div class="mt-8 grid gap-6 lg:grid-cols-3">
 
             {{-- Invitations --}}
@@ -96,6 +100,17 @@
                             <p class="text-sm font-semibold tabular-nums">{{ $order['po']->po_number }}</p>
                             <p class="mt-0.5">{{ $order['pr']?->title }}</p>
                             <p class="mt-1 text-sm tabular-nums text-ink/70">{{ $order['po']->currency }} {{ number_format((float) $order['po']->amount, 2) }}, issued {{ $order['po']->issued_at?->format('M j, Y') }}</p>
+
+                            @php [$poLabel, $poTone] = \App\Support\VendorPortal::orderStatus($order['po']->status); @endphp
+                            <div class="mt-3 flex flex-wrap items-center gap-3">
+                                <span class="badge badge--{{ $poTone }}"><span class="badge-dot"></span>{{ $poLabel }}</span>
+                                @if ($order['po']->status === \App\Enums\PoStatus::Issued)
+                                    <form method="POST" action="{{ route('vendor.orders.acknowledge', $order['po']) }}">
+                                        @csrf
+                                        <button type="submit" class="btn btn-sm btn-solid">Acknowledge order</button>
+                                    </form>
+                                @endif
+                            </div>
 
                             @if ($order['customer'])
                                 <div class="mt-3 border-t border-ink/10 pt-3 text-sm">

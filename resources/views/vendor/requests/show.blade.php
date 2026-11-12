@@ -33,13 +33,25 @@
             </section>
 
             @foreach ($orders as $po)
+                @php [$poLabel, $poTone] = \App\Support\VendorPortal::orderStatus($po->status); @endphp
                 <section class="app-card">
-                    <h3 class="app-card-title">Purchase order</h3>
+                    <div class="flex flex-wrap items-center justify-between gap-3">
+                        <h3 class="app-card-title">Purchase order</h3>
+                        <span class="badge badge--{{ $poTone }}"><span class="badge-dot"></span>{{ $poLabel }}</span>
+                    </div>
                     <dl class="mt-4 grid gap-4 sm:grid-cols-3">
                         <div><dt class="detail-label">Number</dt><dd class="detail-value tabular-nums">{{ $po->po_number }}</dd></div>
                         <div><dt class="detail-label">Amount</dt><dd class="detail-value tabular-nums">{{ $po->currency }} {{ number_format((float) $po->amount, 2) }}</dd></div>
                         <div><dt class="detail-label">Issued</dt><dd class="detail-value">{{ $po->issued_at?->format('F j, Y') }}</dd></div>
+                        <div class="sm:col-span-3"><dt class="detail-label">Payment terms</dt><dd class="detail-value">{{ $po->quotation?->payment_terms ?? 'As in your quotation' }}</dd></div>
+                        <div class="sm:col-span-3"><dt class="detail-label">Delivery terms</dt><dd class="detail-value">{{ $po->quotation?->delivery_terms ?? 'As in your quotation' }}</dd></div>
                     </dl>
+                    @if ($po->status === \App\Enums\PoStatus::Issued)
+                        <form method="POST" action="{{ route('vendor.orders.acknowledge', $po) }}" class="mt-5">
+                            @csrf
+                            <button type="submit" class="btn btn-md btn-solid">Acknowledge order</button>
+                        </form>
+                    @endif
                 </section>
             @endforeach
 

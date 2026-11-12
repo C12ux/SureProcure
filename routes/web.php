@@ -14,6 +14,7 @@ use App\Http\Controllers\Officer\QuotationController as OfficerQuotationControll
 use App\Http\Controllers\Officer\RequisitionController as OfficerRequisitionController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Vendor\AccreditationController;
+use App\Http\Controllers\Vendor\OrderController as VendorOrderController;
 use App\Http\Controllers\Vendor\RequestController as VendorRequestController;
 use App\Http\Middleware\EnsureUserRole;
 use Illuminate\Support\Facades\Route;
@@ -84,6 +85,7 @@ Route::middleware(['auth', 'verified', EnsureUserRole::class.':vendor'])
     ->group(function () {
         Route::get('/requests', [VendorRequestController::class, 'index'])->name('requests.index');
         Route::get('/requests/{requisition}', [VendorRequestController::class, 'show'])->name('requests.show');
+        Route::post('/orders/{order}/acknowledge', [VendorOrderController::class, 'acknowledge'])->name('orders.acknowledge');
     });
 
 // ---- Procurement officer area -----------------------------------------

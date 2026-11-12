@@ -140,6 +140,7 @@ class DashboardController extends Controller
             'vendor' => $vendor,
             'accreditation' => $vendor ? new VendorAccreditation($vendor) : null,
             'stats' => $portal?->stats(),
+            'metrics' => $portal?->metrics(),
             'rows' => $rows,
             'agents' => $portal?->agents() ?? collect(),
             'orders' => $portal?->orders() ?? collect(),
