@@ -50,7 +50,7 @@ class RequestController extends Controller
         return view('vendor.requests.show', [
             'requisition' => $requisition,
             'quotation' => $quotation,
-            'orders' => $requisition->purchaseOrders()->where('vendor_id', $vendor->id)->get(),
+            'orders' => $requisition->purchaseOrders()->where('vendor_id', $vendor->id)->with('quotation')->get(),
             'outcome' => VendorPortal::outcome($requisition, $quotation, $invitation),
             'customer' => $portal->customerContact($requisition, $quotation),
             'contactNote' => VendorPortal::contactNote(),

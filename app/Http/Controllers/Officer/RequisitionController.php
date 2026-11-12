@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Officer;
 
 use App\Enums\BidEvaluationStatus;
 use App\Enums\InvitationStatus;
+use App\Enums\PoStatus;
 use App\Enums\PrStatus;
 use App\Enums\QuotationStatus;
 use App\Http\Controllers\Controller;
@@ -119,6 +120,13 @@ class RequisitionController extends Controller
         }
 
         $requisition->transitionTo($to, $request->user(), $data['note'] ?? null);
+
+        // Closing the request means the order was fulfilled.
+        if ($to === PrStatus::Closed) {
+            $requisition->purchaseOrders()
+                ->where('status', '!=', PoStatus::Cancelled->value)
+                ->update(['status' => PoStatus::Completed->value]);
+        }
 
         // Pulling a request back to revise it: the evaluation is no longer with the customer.
         if (in_array($to, [PrStatus::Sourcing, PrStatus::BidEvaluation], true)) {

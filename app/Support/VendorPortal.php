@@ -4,6 +4,7 @@ namespace App\Support;
 
 use App\Enums\InvitationStatus;
 use App\Enums\OrgRole;
+use App\Enums\PoStatus;
 use App\Enums\PrStatus;
 use App\Enums\QuotationStatus;
 use App\Models\PrVendorInvitation;
@@ -131,6 +132,105 @@ class VendorPortal
                 'pr' => $po->purchaseRequisition,
                 'customer' => $po->purchaseRequisition ? $this->customerContact($po->purchaseRequisition, $po->quotation) : null,
             ]);
+    }
+
+    /** @return array{0: string, 1: string} label and badge tone for a purchase order, in the vendor's words */
+    public static function orderStatus(PoStatus $status): array
+    {
+        return match ($status) {
+            PoStatus::Issued => ['New order', 'attention'],
+            PoStatus::Acknowledged => ['Acknowledged', 'info'],
+            PoStatus::Completed => ['Completed', 'success'],
+            PoStatus::Cancelled => ['Cancelled', 'neutral'],
+        };
+    }
+
+    /**
+     * Performance numbers for the vendor's charts. Everything here is the vendor's own data:
+     * nothing about other vendors, evaluation scores or the customer's budget.
+     */
+    public function metrics(): array
+    {
+        $quotations = $this->vendor->quotations()->with('purchaseRequisition')->get();
+        $invitations = $this->invitations()->with('purchaseRequisition.category')->get();
+        $orders = $this->vendor->purchaseOrders()->get();
+
+        // How the quotations turned out
+        $finished = [PrStatus::Closed, PrStatus::Rejected, PrStatus::Cancelled];
+        $outcomes = ['awarded' => 0, 'evaluating' => 0, 'not_selected' => 0];
+
+        foreach ($quotations as $quotation) {
+            if ($quotation->status === QuotationStatus::Awarded) {
+                $outcomes['awarded']++;
+            } elseif ($quotation->status === QuotationStatus::Rejected || in_array($quotation->purchaseRequisition?->status, $finished, true)) {
+                $outcomes['not_selected']++;
+            } else {
+                $outcomes['evaluating']++;
+            }
+        }
+
+        $decided = $outcomes['awarded'] + $outcomes['not_selected'];
+
+        // How quickly the vendor answers an invitation
+        $invitedAt = $invitations->keyBy('purchase_requisition_id');
+        $hours = $quotations
+            ->map(function ($quotation) use ($invitedAt) {
+                $invitation = $invitedAt->get($quotation->purchase_requisition_id);
+
+                return $invitation?->invited_at ? abs($invitation->invited_at->diffInMinutes($quotation->created_at)) / 60 : null;
+            })
+            ->filter(fn ($h) => $h !== null);
+
+        // The last six months of quotation value, and the part of it that was won
+        $months = [];
+        for ($i = 5; $i >= 0; $i--) {
+            $start = now()->startOfMonth()->subMonths($i);
+            $inMonth = $quotations->filter(fn ($q) => $q->created_at->format('Y-m') === $start->format('Y-m'));
+
+            $months[] = [
+                'label' => $start->format('M'),
+                'quoted' => (float) $inMonth->sum('total_amount'),
+                'awarded' => (float) $inMonth->filter(fn ($q) => $q->status === QuotationStatus::Awarded)->sum('total_amount'),
+            ];
+        }
+
+        // Which categories the invitations come from
+        $quotedIds = $quotations->pluck('purchase_requisition_id')->all();
+        $categories = $invitations
+            ->groupBy(fn ($invitation) => $invitation->purchaseRequisition?->category?->name ?? 'No category')
+            ->map(fn ($group, $name) => [
+                'name' => $name,
+                'invited' => $group->count(),
+                'quoted' => $group->filter(fn ($i) => in_array($i->purchase_requisition_id, $quotedIds, true))->count(),
+            ])
+            ->sortByDesc('invited')
+            ->take(5)
+            ->values()
+            ->all();
+
+        // Open orders and completed orders, like a procurement team tracks them
+        $open = $orders->filter(fn ($o) => in_array($o->status, [PoStatus::Issued, PoStatus::Acknowledged], true));
+        $completed = $orders->filter(fn ($o) => $o->status === PoStatus::Completed);
+        $withLeadTime = $quotations->whereNotNull('lead_time_days');
+
+        return [
+            'has_data' => $quotations->isNotEmpty() || $invitations->isNotEmpty(),
+            'outcomes' => $outcomes,
+            'decided' => $decided,
+            'win_rate' => $decided > 0 ? (int) round($outcomes['awarded'] / $decided * 100) : null,
+            'response_hours' => $hours->isNotEmpty() ? (float) $hours->avg() : null,
+            'avg_lead_days' => $withLeadTime->isNotEmpty() ? (float) $withLeadTime->avg('lead_time_days') : null,
+            'avg_quote' => $quotations->isNotEmpty() ? (float) $quotations->avg('total_amount') : null,
+            'months' => $months,
+            'categories' => $categories,
+            'orders' => [
+                'new' => $orders->filter(fn ($o) => $o->status === PoStatus::Issued)->count(),
+                'open' => $open->count(),
+                'open_value' => (float) $open->sum('amount'),
+                'completed' => $completed->count(),
+                'completed_value' => (float) $completed->sum('amount'),
+            ],
+        ];
     }
 
     /** The customer's contact, or null when the rules do not allow this vendor to see it yet. */
