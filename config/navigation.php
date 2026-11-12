@@ -15,6 +15,7 @@ return [
 
     'vendor' => [
         ['label' => 'Dashboard', 'route' => 'dashboard', 'icon' => 'home', 'match' => 'dashboard'],
+        ['label' => 'Requests', 'route' => 'vendor.requests.index', 'icon' => 'document', 'match' => 'vendor.requests.*'],
         ['label' => 'Accreditation', 'route' => 'vendor.accreditation.show', 'icon' => 'shield', 'match' => 'vendor.accreditation.*'],
     ],
 

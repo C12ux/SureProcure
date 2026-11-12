@@ -13,6 +13,7 @@ use App\Models\PurchaseRequisition;
 use App\Models\User;
 use App\Models\Vendor;
 use App\Support\VendorAccreditation;
+use App\Support\VendorPortal;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -125,11 +126,24 @@ class DashboardController extends Controller
     private function vendor(User $user): View
     {
         $vendor = $user->organizations->first()?->vendor;
+        $portal = $vendor ? new VendorPortal($vendor) : null;
+
+        $rows = collect();
+        if ($portal) {
+            $quotations = $portal->quotationsByRequest();
+            $rows = $portal->invitationsForList()->limit(6)->get()
+                ->map(fn ($invitation) => $portal->row($invitation, $quotations));
+        }
 
         return view('dashboard.vendor', [
             'user' => $user,
             'vendor' => $vendor,
             'accreditation' => $vendor ? new VendorAccreditation($vendor) : null,
+            'stats' => $portal?->stats(),
+            'rows' => $rows,
+            'agents' => $portal?->agents() ?? collect(),
+            'orders' => $portal?->orders() ?? collect(),
+            'contactNote' => VendorPortal::contactNote(),
         ]);
     }
 }

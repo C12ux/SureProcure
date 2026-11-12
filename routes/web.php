@@ -14,6 +14,7 @@ use App\Http\Controllers\Officer\QuotationController as OfficerQuotationControll
 use App\Http\Controllers\Officer\RequisitionController as OfficerRequisitionController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Vendor\AccreditationController;
+use App\Http\Controllers\Vendor\RequestController as VendorRequestController;
 use App\Http\Middleware\EnsureUserRole;
 use Illuminate\Support\Facades\Route;
 
@@ -74,6 +75,15 @@ Route::middleware(['auth', 'verified', EnsureUserRole::class.':vendor'])
         Route::get('/documents', 'documents')->name('documents');
         Route::post('/documents', 'upload')->name('documents.upload');
         Route::post('/submit', 'submit')->name('submit');
+    });
+
+// ---- Vendor: requests they were invited to quote on (read only) --------
+Route::middleware(['auth', 'verified', EnsureUserRole::class.':vendor'])
+    ->prefix('vendor')
+    ->name('vendor.')
+    ->group(function () {
+        Route::get('/requests', [VendorRequestController::class, 'index'])->name('requests.index');
+        Route::get('/requests/{requisition}', [VendorRequestController::class, 'show'])->name('requests.show');
     });
 
 // ---- Procurement officer area -----------------------------------------
