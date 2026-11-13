@@ -1,15 +1,17 @@
 <x-app-layout>
-    <x-slot name="title">Requests</x-slot>
+    <x-slot name="section">Assigned requisitions</x-slot>
+    <x-slot name="description">Find and manage purchase requests assigned to you.</x-slot>
+    <x-slot name="title">Assigned requisitions</x-slot>
 
     @php
         $tabs = ['action' => 'Needs my action', 'waiting' => 'Waiting on customer', 'completed' => 'Completed', 'all' => 'All'];
     @endphp
 
-    <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+    <div class="list-toolbar">
         <nav class="flex flex-wrap gap-1" aria-label="Filter by status">
             @foreach ($tabs as $key => $label)
                 <a href="{{ route('officer.requisitions.index', array_filter(['status' => $key === 'action' ? null : $key, 'q' => $search ?: null])) }}"
-                   class="tab {{ $filter === $key ? 'tab--active' : '' }}">{{ $label }}</a>
+                   class="tab {{ $filter === $key ? 'tab--active' : '' }}" @if ($filter === $key) aria-current="page" @endif>{{ $label }}</a>
             @endforeach
         </nav>
 

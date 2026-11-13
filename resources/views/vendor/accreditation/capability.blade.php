@@ -3,6 +3,8 @@
 @endphp
 
 <x-app-layout>
+    <x-slot name="section">Accreditation</x-slot>
+    <x-slot name="description">Update your experience, certifications, and compliance information.</x-slot>
     <x-slot name="title">Capability and compliance</x-slot>
     <x-slot name="actions"><a href="{{ route('vendor.accreditation.show') }}" class="btn btn-sm btn-outline-dark">Back</a></x-slot>
 

@@ -151,3 +151,62 @@
 }
 @keyframes bar-grow { from { transform: scaleX(0); } }
 @media (prefers-reduced-motion: reduce) { .bar-fill { animation: none; } }
+
+/* SureProcure workspace redesign. The application views share these treatments. */
+@layer components {
+    .app, .marketing { color: #17152b; }
+    .workspace-width { max-width: 1440px; margin-inline: auto; }
+    .workspace-rail { background: #191546; }
+    .workspace-context { background: #fff; border-bottom: 1px solid #e2dfed; }
+    .workspace-brand .font-display { font-size: 1.125rem; }
+    .workspace-brand img { height: 1.75rem; }
+    .workspace-brand .rounded-xl { padding-inline: .45rem; }
+    .workspace-identity { @apply rounded-lg px-2.5 py-2.5; background: #211c55; }
+    .side-link { @apply rounded-lg text-white/80; }
+    .side-link--active { background: #393078; color: #fff; }
+
+    .skip-link { @apply sr-only focus:not-sr-only focus:fixed focus:left-3 focus:top-3 focus:z-[60] focus:rounded-lg focus:bg-white focus:p-3 focus:text-jackson; }
+    .page-title { @apply break-words text-3xl sm:text-4xl; }
+    .app-card, .stat { border-color: #e2dfed; @apply rounded-xl; }
+    .app-card:not(.app-card--flush) { @apply px-4 sm:px-5; }
+    .guest-card { @apply sm:p-8; }
+    .app-card--flush { @apply overflow-x-auto; }
+    .stat { @apply h-full px-4 py-3.5; }
+    .stat-value { @apply text-3xl text-jackson; }
+    .stat-label { @apply text-xs font-semibold; }
+    .stat--attention { background: #fff2d2; border-color: #f0daa9; }
+    .stat--attention .stat-value { color: #774900; }
+    .btn { @apply rounded-lg; }
+    .field-input { @apply rounded-lg px-3 py-2.5 text-sm; border-color: #cbc7dd; }
+    .data-table th { @apply bg-mist-50 text-ink/70; }
+    .data-table td { @apply py-3; }
+    .data-table tbody tr { border-color: #e2dfed; }
+    .data-table tbody tr:hover { background: #faf9ff; }
+    .data-table tbody tr:focus-within { background: #faf9ff; }
+    .badge--info { background: #eeecfc; color: #282391; }
+    .badge--attention { background: #fff2d2; color: #774900; }
+    .badge--attention .badge-dot { background: currentColor; }
+    .badge--success { background: #e9f5d8; color: #365d12; }
+    .badge--success .badge-dot { background: currentColor; }
+    .badge--danger { background: #fde9ed; color: #a6143c; }
+    .tab { @apply rounded-lg px-3 py-2 text-xs sm:text-sm; }
+    .tab--active { background: #eeecfc; color: #282391; }
+    .tab--active:hover { background: #e2dffc; }
+
+    .priority-panel {
+        @apply flex flex-wrap items-center justify-between gap-4 rounded-xl px-5 py-5 text-white sm:px-7 sm:py-6;
+        background: linear-gradient(110deg, #191546, #282391);
+    }
+    .priority-label { @apply text-xs font-semibold uppercase tracking-wider; color: #d4ccff; }
+    .priority-title { @apply mt-1.5 break-words font-display text-2xl font-extrabold tracking-tight sm:text-3xl; }
+    .priority-copy { @apply mt-2 text-sm leading-relaxed; color: #e3dfff; }
+    .priority-actions { @apply flex shrink-0 flex-wrap items-center gap-2; }
+
+    .list-toolbar { @apply flex flex-wrap items-center justify-between gap-3 rounded-xl border bg-white p-3; border-color: #e2dfed; }
+    .list-toolbar form { @apply flex-wrap; }
+    .list-toolbar input { min-width: 0; }
+    .progress-step { @apply min-w-0 flex-wrap rounded-lg border-0 bg-mist-50 px-2.5 py-2 text-xs; }
+    .progress-step--done { background: #e9f5d8; color: #365d12; }
+    .progress-step--current { background: #eeecfc; color: #282391; }
+    .progress { @apply gap-2; }
+}

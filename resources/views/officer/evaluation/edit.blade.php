@@ -3,6 +3,8 @@
 @endphp
 
 <x-app-layout>
+    <x-slot name="section">Assigned requisitions</x-slot>
+    <x-slot name="description">Compare quotations and prepare your recommendation.</x-slot>
     <x-slot name="title">Bid evaluation</x-slot>
     <x-slot name="actions">
         <a href="{{ route('officer.requisitions.show', $requisition) }}" class="btn btn-sm btn-outline-dark">Back to {{ $requisition->pr_number }}</a>
@@ -26,7 +28,7 @@
         </x-alert>
     @endif
 
-    <form method="POST" action="{{ route('officer.evaluation.save', $requisition) }}" class="mt-6 max-w-4xl space-y-6"
+    <form method="POST" action="{{ route('officer.evaluation.save', $requisition) }}" class="mt-6 space-y-5"
           x-data="{
               scores: @js($initial),
               weights: @js($weights),
@@ -53,51 +55,85 @@
           }">
         @csrf
 
-        @foreach ($quotations as $quotation)
-            <section class="app-card">
-                <div class="flex flex-wrap items-start justify-between gap-4">
-                    <div>
-                        <h2 class="app-card-title">{{ $quotation->vendor?->name }}</h2>
-                        <p class="mt-1 text-sm text-ink/70">
-                            Quoted {{ $money($quotation->total_amount) }}@if ($quotation->lead_time_days !== null), delivery in {{ $quotation->lead_time_days }} days @endif
-                        </p>
-                    </div>
-                    <label class="flex cursor-pointer items-center gap-2 rounded-full border border-ink/15 px-4 py-2 text-sm font-semibold"
-                           x-bind:class="recommended === '{{ $quotation->id }}' ? 'border-jackson bg-jackson/5 text-jackson' : ''">
-                        <input type="radio" name="recommended_quotation_id" value="{{ $quotation->id }}" x-model="recommended" class="field-check rounded-full">
-                        Recommend this vendor
-                    </label>
-                </div>
+        <section class="app-card app-card--flush" aria-labelledby="quotation-comparison">
+            <h2 id="quotation-comparison" class="app-card-title px-5 pb-4 pt-5">Quotation comparison</h2>
+            <table class="data-table">
+                <thead>
+                    <tr><th scope="col">Vendor</th><th scope="col">Quoted amount</th><th scope="col">Delivery</th><th scope="col">Recommendation</th></tr>
+                </thead>
+                <tbody>
+                    @foreach ($quotations as $quotation)
+                        <tr>
+                            <th scope="row">{{ $quotation->vendor?->name }}</th>
+                            <td class="whitespace-nowrap tabular-nums">{{ $money($quotation->total_amount) }}</td>
+                            <td class="whitespace-nowrap">{{ $quotation->lead_time_days !== null ? $quotation->lead_time_days.' days' : 'Not specified' }}</td>
+                            <td>
+                                <label class="inline-flex items-center gap-2 whitespace-nowrap">
+                                    <input type="radio" name="recommended_quotation_id" value="{{ $quotation->id }}" x-model="recommended"
+                                           class="field-check rounded-full" @checked((string) $recommendedId === (string) $quotation->id)
+                                           aria-label="Recommend {{ $quotation->vendor?->name }}">
+                                    <span x-text="recommended === '{{ $quotation->id }}' ? 'Selected' : 'Select'">Select</span>
+                                </label>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </section>
 
-                @foreach ($criteria as $type => $list)
-                    <div class="mt-6">
-                        <h3 class="font-semibold">{{ ucfirst($type) }}</h3>
-                        <div class="mt-3 divide-y divide-ink/10">
-                            @foreach ($list as $i => $criterion)
-                                <div class="flex items-center justify-between gap-4 py-3">
-                                    <label for="s-{{ $quotation->id }}-{{ $type }}-{{ $i }}" class="min-w-0 text-sm">
-                                        {{ $criterion['name'] }}
-                                        <span class="text-ink/60">(weight {{ $criterion['weight'] }})</span>
-                                    </label>
-                                    <input id="s-{{ $quotation->id }}-{{ $type }}-{{ $i }}" type="number" min="0" max="100" step="0.5"
-                                           name="scores[{{ $quotation->id }}][{{ $type }}][{{ $i }}]"
-                                           x-model="scores[{{ $quotation->id }}].{{ $type }}[{{ $i }}]"
-                                           class="field-input w-28 shrink-0 text-right tabular-nums" placeholder="0 to 100">
-                                </div>
+        @foreach ($criteria as $type => $list)
+            <section class="app-card app-card--flush" aria-labelledby="scores-{{ $type }}">
+                <h2 id="scores-{{ $type }}" class="app-card-title px-5 pb-4 pt-5">{{ ucfirst($type) }} scores <span class="ml-1 text-xs font-medium text-ink/70">0–100</span></h2>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Criterion and weight</th>
+                            @foreach ($quotations as $quotation)
+                                <th scope="col">{{ $quotation->vendor?->name }}</th>
                             @endforeach
-                        </div>
-                    </div>
-                @endforeach
-
-                <div class="mt-5 flex flex-wrap items-baseline justify-between gap-3 border-t border-ink/10 pt-4">
-                    <p class="text-sm text-ink/70">
-                        Technical <span class="font-semibold tabular-nums text-ink" x-text="fmt(avg({{ $quotation->id }}, 'technical'))"></span>,
-                        commercial <span class="font-semibold tabular-nums text-ink" x-text="fmt(avg({{ $quotation->id }}, 'commercial'))"></span>
-                    </p>
-                    <p class="font-display text-xl font-bold">Overall <span class="tabular-nums" x-text="fmt(overall({{ $quotation->id }}))"></span></p>
-                </div>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($list as $i => $criterion)
+                            <tr>
+                                <th scope="row" class="min-w-[12rem] whitespace-normal">
+                                    {{ $criterion['name'] }}
+                                    <span class="block font-normal text-ink/70">Weight {{ $criterion['weight'] }}%</span>
+                                </th>
+                                @foreach ($quotations as $quotation)
+                                    <td>
+                                        <label class="sr-only" for="s-{{ $quotation->id }}-{{ $type }}-{{ $i }}">{{ $criterion['name'] }} score for {{ $quotation->vendor?->name }}</label>
+                                        <input id="s-{{ $quotation->id }}-{{ $type }}-{{ $i }}" type="number" min="0" max="100" step="0.5"
+                                               name="scores[{{ $quotation->id }}][{{ $type }}][{{ $i }}]"
+                                               x-model="scores[{{ $quotation->id }}].{{ $type }}[{{ $i }}]"
+                                               class="field-input w-24 text-right tabular-nums" placeholder="0–100" value="{{ $initial[$quotation->id][$type][$i] }}">
+                                    </td>
+                                @endforeach
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
             </section>
         @endforeach
+
+        <section class="app-card app-card--flush" aria-labelledby="score-summary">
+            <h2 id="score-summary" class="app-card-title px-5 pb-4 pt-5">Weighted score summary</h2>
+            <table class="data-table">
+                <thead>
+                    <tr><th scope="col">Vendor</th><th scope="col">Technical</th><th scope="col">Commercial</th><th scope="col">Overall</th></tr>
+                </thead>
+                <tbody class="tabular-nums">
+                    @foreach ($quotations as $quotation)
+                        <tr>
+                            <th scope="row">{{ $quotation->vendor?->name }}</th>
+                            <td x-text="fmt(avg({{ $quotation->id }}, 'technical'))"></td>
+                            <td x-text="fmt(avg({{ $quotation->id }}, 'commercial'))"></td>
+                            <td class="font-semibold text-jackson" x-text="fmt(overall({{ $quotation->id }}))"></td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </section>
         <x-input-error :messages="$errors->get('recommended_quotation_id')" />
         @foreach ($errors->get('scores.*') as $messages)
             <x-input-error :messages="$messages" />

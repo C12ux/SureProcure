@@ -1,5 +1,7 @@
 <x-app-layout>
-    <x-slot name="title">Invite someone</x-slot>
+    <x-slot name="section">Invitations</x-slot>
+    <x-slot name="description">Generate a sign-up link for the recipient’s role.</x-slot>
+    <x-slot name="title">New invitation</x-slot>
 
     <form method="POST" action="{{ route('admin.invitations.store') }}" class="app-card max-w-2xl space-y-6"
           x-data="{ role: '{{ old('role', 'vendor') }}' }">

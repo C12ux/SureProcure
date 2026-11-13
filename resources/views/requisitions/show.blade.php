@@ -7,7 +7,9 @@
 @endphp
 
 <x-app-layout>
-    <x-slot name="title">{{ $requisition->pr_number }}</x-slot>
+    <x-slot name="section">Requisitions</x-slot>
+    <x-slot name="description"><span class="font-mono">{{ $requisition->pr_number }}</span></x-slot>
+    <x-slot name="title">{{ $requisition->title }}</x-slot>
     <x-slot name="actions">
         @if ($can['update'])
             <a href="{{ route('requisitions.edit', $requisition) }}" class="btn btn-sm btn-outline-dark">Edit</a>
@@ -21,7 +23,6 @@
     </x-slot>
 
     <div class="flex flex-wrap items-center gap-3">
-        <h2 class="font-display text-2xl font-bold tracking-tight">{{ $requisition->title }}</h2>
         <x-status-badge :status="$status" />
     </div>
 
@@ -47,9 +48,9 @@
         @endif
     </div>
 
-    <div class="mt-6 grid gap-6 lg:grid-cols-3">
+    <div class="mt-6 grid gap-6 xl:grid-cols-3">
 
-        <div class="space-y-6 lg:col-span-2">
+        <div class="space-y-6 xl:col-span-2">
 
             {{-- Bid evaluation from the officer, with the customer's decision --}}
             @if ($evaluation)

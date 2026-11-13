@@ -1,5 +1,5 @@
 <x-guest-layout>
-    <h1 class="heading-form">Log in</h1>
+    <h1 class="heading-form text-jackson">Log in</h1>
     <p class="mt-2 text-base text-ink/70">Welcome back. Pick up where your requests left off.</p>
 
     <x-auth-session-status class="mt-6" :status="session('status')" />

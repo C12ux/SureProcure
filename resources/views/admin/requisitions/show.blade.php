@@ -6,20 +6,21 @@
 @endphp
 
 <x-app-layout>
-    <x-slot name="title">{{ $requisition->pr_number }}</x-slot>
+    <x-slot name="section">Requisitions</x-slot>
+    <x-slot name="description"><span class="font-mono">{{ $requisition->pr_number }}</span></x-slot>
+    <x-slot name="title">{{ $requisition->title }}</x-slot>
     <x-slot name="actions">
         <a href="{{ route('admin.requisitions.index') }}" class="btn btn-sm btn-outline-dark">All requests</a>
     </x-slot>
 
     <div class="flex flex-wrap items-center gap-3">
-        <h2 class="font-display text-2xl font-bold tracking-tight">{{ $requisition->title }}</h2>
         <x-status-badge :status="$requisition->status" :staff="true" />
     </div>
     <p class="mt-1 text-ink/70">{{ $requisition->organization?->display_name }}</p>
 
-    <div class="mt-6 grid gap-6 lg:grid-cols-3">
+    <div class="mt-6 grid gap-6 xl:grid-cols-3">
 
-        <div class="space-y-6 lg:col-span-2">
+        <div class="space-y-6 xl:col-span-2">
 
             {{-- Manage --}}
             <section class="app-card">

@@ -1,20 +1,11 @@
 <section id="how-it-works" class="scroll-mt-4 bg-mist-50">
-    <div class="page-container grid gap-12 py-24 lg:grid-cols-12 lg:py-32">
-        <div class="lg:col-span-4">
-            <div class="lg:sticky lg:top-12">
-                <h2 class="heading-section">From request to purchase order</h2>
-                <p class="lead mt-5 max-w-sm text-ink/75">You decide at the points that matter. We do the legwork in between.</p>
-            </div>
-        </div>
-
-        <ol class="lg:col-span-8">
+    <div class="page-container py-14 lg:py-20">
+        <h2 class="heading-section text-ink">How it works</h2>
+        <ol class="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             @foreach (config('landing.steps') as $step)
-                <li class="step-row">
-                    <span class="step-number">{{ $loop->iteration }}</span>
-                    <div>
-                        <h3 class="heading-step">{{ $step['title'] }}</h3>
-                        <p class="mt-2 max-w-xl text-base leading-relaxed text-ink/75">{{ $step['text'] }}</p>
-                    </div>
+                <li class="app-card">
+                    <h3 class="app-card-title">{{ $step['title'] }}</h3>
+                    <p class="mt-2 text-sm leading-relaxed text-ink/75">{{ $step['text'] }}</p>
                 </li>
             @endforeach
         </ol>

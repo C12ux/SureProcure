@@ -12,6 +12,8 @@
 @endphp
 
 <x-app-layout>
+    <x-slot name="section">Vendors</x-slot>
+    <x-slot name="description">Review company details, supporting documents, and the accreditation decision.</x-slot>
     <x-slot name="title">{{ $vendor->name }}</x-slot>
     <x-slot name="actions">
         <a href="{{ route('admin.vendors.index') }}" class="btn btn-sm btn-outline-dark">All vendors</a>
@@ -26,9 +28,9 @@
         @endif
     </div>
 
-    <div class="mt-6 grid gap-6 lg:grid-cols-3">
+    <div class="mt-6 grid gap-6 xl:grid-cols-3">
 
-        <div class="space-y-6 lg:col-span-2">
+        <div class="space-y-6 xl:col-span-2">
 
             {{-- Company --}}
             <section class="app-card">

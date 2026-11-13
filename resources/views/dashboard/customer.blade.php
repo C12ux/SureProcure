@@ -1,14 +1,14 @@
 <x-app-layout>
-    <x-slot name="title">Dashboard</x-slot>
+    <x-slot name="section">Dashboard</x-slot>
+    <x-slot name="description">Track purchase requests and review decisions from your procurement officer.</x-slot>
+    <x-slot name="title">Customer dashboard</x-slot>
     <x-slot name="actions">
         <a href="{{ route('requisitions.create') }}" class="btn btn-sm btn-solid inline-flex items-center gap-2">
             <x-icon name="plus" class="h-4 w-4" /> New requisition
         </a>
     </x-slot>
 
-    <p class="lead text-ink/70">
-        Welcome back, {{ strtok($user->name, ' ') }}.
-        @if ($organization) Here is where {{ $organization->display_name }} stands. @endif
+    @if ($organization) Here is where {{ $organization->display_name }} stands. @endif
     </p>
 
     @if ($organization && ! $subscribed)
@@ -17,8 +17,23 @@
         </x-alert>
     @endif
 
+    @if ($nextRequest = $attention->first())
+        <section class="priority-panel" aria-labelledby="customer-priority">
+            <div class="min-w-0">
+                <p class="priority-label">{{ $nextRequest->status->label() }}</p>
+                <h2 id="customer-priority" class="priority-title">{{ $nextRequest->title }}</h2>
+                <p class="priority-copy">{{ $nextRequest->pr_number }} · Open this request to see what your procurement officer needs.</p>
+            </div>
+            <div class="priority-actions">
+                <a href="{{ route('requisitions.show', $nextRequest) }}" class="btn btn-sm btn-light">
+                    {{ $nextRequest->status === \App\Enums\PrStatus::AwaitingClientReview ? 'Review evaluation' : 'View request' }}
+                </a>
+            </div>
+        </section>
+    @endif
+
     {{-- Counts --}}
-    <div class="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+    <div class="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         <a href="{{ route('requisitions.index', ['status' => 'drafts']) }}" class="block rounded-2xl">
             <x-stat label="Drafts" :value="$stats['drafts']" />
         </a>
@@ -38,9 +53,9 @@
             <a href="{{ route('requisitions.create') }}" class="btn btn-md btn-solid">Create your first requisition</a>
         </x-empty-state>
     @else
-        <div class="mt-8 grid gap-6 lg:grid-cols-3">
+        <div class="mt-8 grid gap-6 2xl:grid-cols-3">
 
-            <section class="app-card app-card--flush lg:col-span-2">
+            <section class="app-card app-card--flush 2xl:col-span-2">
                 <div class="flex items-center justify-between px-6 pb-4 pt-6">
                     <h2 class="app-card-title">Recent requisitions</h2>
                     <a href="{{ route('requisitions.index') }}" class="auth-link text-sm">View all</a>

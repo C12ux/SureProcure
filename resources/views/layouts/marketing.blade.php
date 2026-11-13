@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@yield('title', config('app.name', 'SureProcure'))</title>
+    <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
     <meta name="description" content="@yield('description')">
 
     <link rel="preconnect" href="https://fonts.bunny.net">
