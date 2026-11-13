@@ -1,9 +1,20 @@
 <x-app-layout>
-    <x-slot name="title">Dashboard</x-slot>
+    <x-slot name="section">Dashboard</x-slot>
+    <x-slot name="description">Prioritize assigned work and track requests waiting on a customer decision.</x-slot>
+    <x-slot name="title">Officer dashboard</x-slot>
 
-    <p class="lead text-ink/70">Welcome back, {{ strtok($user->name, ' ') }}. Here are the requests assigned to you.</p>
+    @if ($nextRequest = $actionList->first())
+        <section class="priority-panel" aria-labelledby="officer-priority">
+            <div class="min-w-0">
+                <p class="priority-label">Next action · {{ $nextRequest->status->staffLabel() }}</p>
+                <h2 id="officer-priority" class="priority-title">{{ $nextRequest->title }}</h2>
+                <p class="priority-copy">{{ $nextRequest->pr_number }} @if ($nextRequest->organization) · {{ $nextRequest->organization->display_name }} @endif</p>
+            </div>
+            <a href="{{ route('officer.requisitions.show', $nextRequest) }}" class="btn btn-sm btn-light">Open requisition</a>
+        </section>
+    @endif
 
-    <div class="mt-8 grid gap-4 sm:grid-cols-3">
+    <div class="mt-5 grid gap-3 sm:grid-cols-3">
         <a href="{{ route('officer.requisitions.index', ['status' => 'action']) }}" class="block rounded-2xl">
             <x-stat label="Need your action" :value="$stats['action']" :tone="$stats['action'] > 0 ? 'attention' : 'neutral'" />
         </a>

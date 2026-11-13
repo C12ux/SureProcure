@@ -1,5 +1,5 @@
 <x-guest-layout>
-    <h1 class="heading-form">Choose a new password</h1>
+    <h1 class="heading-form text-jackson">Choose a new password</h1>
 
     <form method="POST" action="{{ route('password.store') }}" class="mt-8 space-y-5" x-data="{ pw: '', confirm: '' }">
         @csrf

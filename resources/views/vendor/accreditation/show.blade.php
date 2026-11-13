@@ -10,6 +10,8 @@
 @endphp
 
 <x-app-layout>
+    <x-slot name="section">Accreditation</x-slot>
+    <x-slot name="description">Complete your company profile, capability information, and supporting documents.</x-slot>
     <x-slot name="title">Accreditation</x-slot>
     <x-slot name="actions"><x-vendor-badge :vendor="$vendor" /></x-slot>
 

@@ -1,6 +1,8 @@
 @use('App\Enums\OrgRole')
 
 <x-app-layout>
+    <x-slot name="section">Customers</x-slot>
+    <x-slot name="description">Browse registered customer organizations and their account activity.</x-slot>
     <x-slot name="title">Customers</x-slot>
 
     @if ($customers->isEmpty())

@@ -1,6 +1,6 @@
 <section class="bg-mist-100">
-    <div class="page-container py-24 lg:py-28">
-        <h2 class="heading-section max-w-3xl">Hand off the legwork.</h2>
+    <div class="page-container py-12 lg:py-16">
+        <h2 class="heading-section max-w-3xl">Start a purchase requisition</h2>
         <p class="lead mt-5 max-w-xl text-ink/75">
             Create a customer account to start drafting requisitions. Vendors join by invitation.
         </p>

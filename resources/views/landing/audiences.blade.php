@@ -1,28 +1,27 @@
-<section class="bg-ink text-mist">
-    <div class="page-container grid divide-y divide-mist/15 lg:grid-cols-3 lg:divide-x lg:divide-y-0">
-        @foreach (config('landing.audiences') as $audience)
-            <div id="{{ $audience['id'] }}" class="audience-col scroll-mt-4">
-                <h2 class="heading-column">{{ $audience['title'] }}</h2>
-                <p class="lead mt-3">{{ $audience['intro'] }}</p>
-
-                <ul class="audience-list">
-                    @foreach ($audience['items'] as $item)
-                        <li class="flex gap-3">
-                            <x-brand.check class="audience-check {{ $audience['accent'] === 'success' ? 'audience-check--success' : '' }}" />
-                            {{ $item }}
-                        </li>
-                    @endforeach
-                </ul>
-
-                <p class="audience-note">{{ $audience['note'] }}</p>
-
-                @if (Route::has($audience['cta']['route']))
-                    <a href="{{ route($audience['cta']['route']) }}"
-                       class="btn btn-md mt-6 {{ $audience['cta']['style'] === 'light' ? 'btn-light' : 'btn-outline-light' }}">
-                        {{ $audience['cta']['label'] }}
-                    </a>
-                @endif
-            </div>
-        @endforeach
+<section class="bg-mist-50" aria-labelledby="audience-heading">
+    <div class="page-container pb-14 lg:pb-20">
+        <h2 id="audience-heading" class="heading-section text-ink">Who it’s for</h2>
+        <div class="mt-7 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            @foreach (config('landing.audiences') as $audience)
+                <article id="{{ $audience['id'] }}" class="app-card flex scroll-mt-4 flex-col">
+                    <h3 class="app-card-title">{{ $audience['title'] }}</h3>
+                    <p class="mt-2 text-sm leading-relaxed text-ink/75">{{ $audience['intro'] }}</p>
+                    <ul class="mt-4 space-y-2 text-sm">
+                        @foreach ($audience['items'] as $item)
+                            <li class="flex gap-2">
+                                <x-brand.check class="mt-0.5 h-4 w-4 shrink-0 text-jackson" />
+                                {{ $item }}
+                            </li>
+                        @endforeach
+                    </ul>
+                    <p class="mb-4 mt-4 text-sm leading-relaxed text-ink/75">{{ $audience['note'] }}</p>
+                    @if (Route::has($audience['cta']['route']))
+                        <a href="{{ route($audience['cta']['route']) }}" class="btn btn-sm btn-outline-dark mt-auto self-start">
+                            {{ $audience['cta']['label'] }}
+                        </a>
+                    @endif
+                </article>
+            @endforeach
+        </div>
     </div>
 </section>

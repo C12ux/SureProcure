@@ -1,5 +1,5 @@
 <x-guest-layout>
-    <h1 class="heading-form">This link can’t be used</h1>
+    <h1 class="heading-form text-jackson">This link can’t be used</h1>
     <p class="mt-3 text-base text-ink/70">{{ $message }}</p>
 
     <p class="mt-8 text-sm">

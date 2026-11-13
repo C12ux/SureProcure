@@ -1,6 +1,6 @@
 @extends('layouts.marketing')
 
-@section('title', config('app.name', 'SureProcure').': procurement handled, from request to purchase order')
+@section('title', 'Sure Procure')
 @section('description', 'SureProcure gives your company a dedicated procurement officer, accredited vendors and a bid evaluation you can approve in one place.')
 
 @section('content')

@@ -1,4 +1,6 @@
 <x-app-layout>
+    <x-slot name="section">Vendors</x-slot>
+    <x-slot name="description">Review accreditation applications and track vendor status.</x-slot>
     <x-slot name="title">Vendors</x-slot>
     <x-slot name="actions">
         <a href="{{ route('admin.invitations.create') }}" class="btn btn-sm btn-solid inline-flex items-center gap-2">
@@ -16,11 +18,11 @@
         ];
     @endphp
 
-    <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+    <div class="list-toolbar">
         <nav class="flex flex-wrap gap-1" aria-label="Filter by status">
             @foreach ($tabs as $key => $label)
                 <a href="{{ route('admin.vendors.index', array_filter(['status' => $key === 'all' ? null : $key, 'q' => $search ?: null])) }}"
-                   class="tab {{ $filter === $key ? 'tab--active' : '' }}">{{ $label }}</a>
+                   class="tab {{ $filter === $key ? 'tab--active' : '' }}" @if ($filter === $key) aria-current="page" @endif>{{ $label }}</a>
             @endforeach
         </nav>
 

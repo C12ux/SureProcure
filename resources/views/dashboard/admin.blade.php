@@ -1,14 +1,27 @@
 <x-app-layout>
-    <x-slot name="title">Dashboard</x-slot>
+    <x-slot name="section">Dashboard</x-slot>
+    <x-slot name="description">Assign incoming requests, review accreditation, and manage account invitations.</x-slot>
+    <x-slot name="title">Admin dashboard</x-slot>
     <x-slot name="actions">
         <a href="{{ route('admin.invitations.create') }}" class="btn btn-sm btn-solid inline-flex items-center gap-2">
             <x-icon name="plus" class="h-4 w-4" /> Invite someone
         </a>
     </x-slot>
 
-    <p class="lead text-ink/70">Welcome back, {{ strtok($user->name, ' ') }}. Here is what needs you today.</p>
+    @if ($stats['unassigned'] > 0)
+        <section class="priority-panel" aria-labelledby="admin-priority">
+            <div class="min-w-0">
+                <p class="priority-label">Assignment queue</p>
+                <h2 id="admin-priority" class="priority-title">
+                    {{ $stats['unassigned'] }} {{ \Illuminate\Support\Str::plural('request', $stats['unassigned']) }} {{ $stats['unassigned'] === 1 ? 'needs' : 'need' }} an officer
+                </h2>
+                <p class="priority-copy">Review the unassigned requests and choose a procurement officer.</p>
+            </div>
+            <a href="{{ route('admin.requisitions.index', ['status' => 'unassigned']) }}" class="btn btn-sm btn-light">View unassigned</a>
+        </section>
+    @endif
 
-    <div class="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+    <div class="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-6">
         <a href="{{ route('admin.requisitions.index', ['status' => 'unassigned']) }}" class="block rounded-2xl">
             <x-stat label="Requests needing an officer" :value="$stats['unassigned']" :tone="$stats['unassigned'] > 0 ? 'attention' : 'neutral'" />
         </a>

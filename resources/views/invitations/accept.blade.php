@@ -1,5 +1,5 @@
 <x-guest-layout>
-    <h1 class="heading-form">Welcome to SureProcure</h1>
+    <h1 class="heading-form text-jackson">Welcome to SureProcure</h1>
 
     <p class="mt-2 text-base text-ink/70">
         @if ($invitation->role === \App\Enums\UserRole::Vendor)

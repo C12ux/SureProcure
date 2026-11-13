@@ -1,5 +1,7 @@
 <x-app-layout>
-    <x-slot name="title">Requests</x-slot>
+    <x-slot name="section">Invited requests</x-slot>
+    <x-slot name="description">View requests your procurement agent invited you to quote on.</x-slot>
+    <x-slot name="title">Invited requests</x-slot>
 
     @if ($rows->isEmpty())
         <x-empty-state title="No invitations yet" text="When a customer request matches your categories, your procurement agent invites you to quote and it appears here." />

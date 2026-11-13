@@ -1,4 +1,6 @@
 <x-app-layout>
+    <x-slot name="section">Invitations</x-slot>
+    <x-slot name="description">Track invitations and manage pending links.</x-slot>
     <x-slot name="title">Invitations</x-slot>
     <x-slot name="actions">
         <a href="{{ route('admin.invitations.create') }}" class="btn btn-sm btn-solid inline-flex items-center gap-2">

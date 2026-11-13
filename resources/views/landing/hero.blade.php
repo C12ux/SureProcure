@@ -1,9 +1,9 @@
-<section class="bg-jackson text-mist">
+<section class="workspace-rail text-mist">
     @include('landing.header')
 
-    <div class="page-container grid items-center gap-14 pb-24 pt-12 lg:grid-cols-12 lg:gap-10 lg:pb-32 lg:pt-20">
-        <div class="lg:col-span-7">
-            <h1 class="heading-hero">Procurement handled, from request to purchase order.</h1>
+    <div class="page-container grid items-center gap-9 pb-14 pt-9 lg:grid-cols-12 lg:gap-10 lg:pb-20 lg:pt-14">
+        <div class="lg:col-span-6">
+            <h1 class="heading-hero">Procurement with confidence</h1>
             <p class="lead mt-7 max-w-xl text-mist">
                 Tell us what you need. A dedicated procurement officer sources accredited vendors, compares their bids,
                 and hands you one evaluation to approve.
@@ -17,7 +17,7 @@
             </div>
         </div>
 
-        <div class="lg:col-span-5">
+        <div class="lg:col-span-6">
             @include('landing.bid-evaluation')
         </div>
     </div>

@@ -1,45 +1,33 @@
-@use('App\Enums\AccreditationStatus')
-
 <x-app-layout>
-    <x-slot name="title">Dashboard</x-slot>
+    <x-slot name="section">Dashboard</x-slot>
+    <x-slot name="description">Manage accreditation, invited requests, and awarded purchase orders.</x-slot>
+    <x-slot name="title">Vendor dashboard</x-slot>
 
     @if (! $vendor)
         <x-alert type="warning">Your account is not linked to a vendor company yet. Please contact SureProcure.</x-alert>
     @else
-        <p class="lead text-ink/70">Welcome, {{ strtok($user->name, ' ') }}. {{ $vendor->name }} is on SureProcure.</p>
+        @include('vendor._status')
 
-        <div class="mt-6">@include('vendor._status')</div>
-
-        {{-- Accreditation --}}
-        <section class="app-card max-w-3xl">
-            <div class="flex flex-wrap items-center justify-between gap-3">
-                <h2 class="app-card-title">Accreditation</h2>
-                <x-vendor-badge :vendor="$vendor" />
+        <section class="priority-panel" aria-labelledby="vendor-priority">
+            <div class="min-w-0">
+                <p class="priority-label">Accreditation · {{ $vendor->statusLabel() }}</p>
+                <h2 id="vendor-priority" class="priority-title">
+                    {{ $vendor->isAccredited() ? 'You’re eligible for sourcing' : 'Your accreditation application' }}
+                </h2>
+                @if ($vendor->isAccredited())
+                    <p class="priority-copy">
+                        {{ $vendor->name }}
+                        @if ($vendor->accreditation_expires_at) · Valid through {{ $vendor->accreditation_expires_at->format('M j, Y') }} @endif
+                    </p>
+                @else
+                    <p class="priority-copy">{{ $accreditation->percent() }}% of the application is complete.</p>
+                @endif
             </div>
-
-            @if ($vendor->accreditation_status === AccreditationStatus::Accredited)
-                <p class="mt-3 text-ink/70">
-                    Your company can be invited to quote on customer requests.
-                    @if ($vendor->accreditation_expires_at) Accreditation runs until {{ $vendor->accreditation_expires_at->format('F j, Y') }}. @endif
-                </p>
-            @else
-                <p class="mt-3 text-ink/70">Customers can only receive quotes from accredited vendors. Finish the three steps and send your application for review.</p>
-
-                <div class="mt-5">
-                    <p class="text-sm font-semibold">{{ $accreditation->percent() }}% complete</p>
-                    <div class="bar-track mt-2" role="progressbar" aria-valuenow="{{ $accreditation->percent() }}" aria-valuemin="0" aria-valuemax="100">
-                        <div class="bar-fill bar-fill--best" style="width: {{ $accreditation->percent() }}%; --d: 100ms;"></div>
-                    </div>
-                </div>
-
-                <a href="{{ route('vendor.accreditation.show') }}" class="btn btn-md btn-solid mt-6">
-                    {{ $vendor->accreditation_status === AccreditationStatus::UnderReview ? 'View your application' : 'Continue accreditation' }}
-                </a>
-            @endif
+            <a href="{{ route('vendor.accreditation.show') }}" class="btn btn-sm btn-light">View accreditation</a>
         </section>
 
         {{-- Your data --}}
-        <div class="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div class="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
             <x-stat label="Awaiting your quote" :value="$stats['awaiting']" :tone="$stats['awaiting'] > 0 ? 'attention' : 'neutral'" />
             <x-stat label="Invitations received" :value="$stats['invited']" />
             <x-stat label="Quotations submitted" :value="$stats['quoted']" />
@@ -53,10 +41,10 @@
             @include('vendor._metrics')
         @endif
 
-        <div class="mt-8 grid gap-6 lg:grid-cols-3">
+        <div class="mt-8 grid gap-6 2xl:grid-cols-3">
 
             {{-- Invitations --}}
-            <section class="app-card app-card--flush lg:col-span-2">
+            <section class="app-card app-card--flush 2xl:col-span-2">
                 <div class="flex items-center justify-between px-6 pb-4 pt-6">
                     <h2 class="app-card-title">Requests you were invited to</h2>
                     @if ($rows->isNotEmpty())

@@ -1,11 +1,10 @@
 <x-app-layout>
-    <x-slot name="title">Dashboard</x-slot>
+    <x-slot name="section">Dashboard</x-slot>
+    <x-slot name="title">Workspace unavailable</x-slot>
+    <x-slot name="description">This workspace is not available for your role yet.</x-slot>
 
-    <div class="app-card max-w-2xl">
-        <h2 class="app-card-title">Your {{ \Illuminate\Support\Str::headline($role->value) }} dashboard is coming next</h2>
-        <p class="mt-3 text-ink/70">
-            The customer dashboard is being built first. Your account and permissions are already set up,
-            so this page will fill in as each role's screens are added.
-        </p>
-    </div>
+    <section class="app-card max-w-2xl">
+        <h2 class="app-card-title">{{ \Illuminate\Support\Str::headline($role->value) }}</h2>
+        <p class="mt-2 text-sm text-ink/70">Contact your administrator about your assigned role if you need access.</p>
+    </section>
 </x-app-layout>

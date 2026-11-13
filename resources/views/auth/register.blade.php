@@ -1,5 +1,5 @@
 <x-guest-layout>
-    <h1 class="heading-form">Create your account</h1>
+    <h1 class="heading-form text-jackson">Create your account</h1>
     <p class="mt-2 text-base text-ink/70">Set up your company, then lodge purchase requisitions. A subscription is needed to submit requests.</p>
 
     <form method="POST" action="{{ route('register') }}" class="mt-8 space-y-5" x-data="{ pw: '', confirm: '' }">

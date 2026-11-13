@@ -1,7 +1,9 @@
 <x-app-layout>
-    <x-slot name="title">Requisitions</x-slot>
+    <x-slot name="section">Requisitions</x-slot>
+    <x-slot name="description">Search, filter, and track your organization’s purchase requests.</x-slot>
+    <x-slot name="title">My requisitions</x-slot>
     <x-slot name="actions">
-        <a href="{{ route('requisitions.export') }}" class="btn btn-sm btn-outline-dark hidden items-center gap-2 sm:inline-flex">
+        <a href="{{ route('requisitions.export') }}" class="btn btn-sm btn-outline-dark inline-flex items-center gap-2">
             <x-icon name="download" class="h-4 w-4" /> Download data
         </a>
         <a href="{{ route('requisitions.create') }}" class="btn btn-sm btn-solid inline-flex items-center gap-2">
@@ -20,11 +22,11 @@
         ];
     @endphp
 
-    <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+    <div class="list-toolbar">
         <nav class="flex flex-wrap gap-1" aria-label="Filter by status">
             @foreach ($tabs as $key => $label)
                 <a href="{{ route('requisitions.index', array_filter(['status' => $key === 'all' ? null : $key, 'q' => $search ?: null])) }}"
-                   class="tab {{ $filter === $key ? 'tab--active' : '' }}">{{ $label }}</a>
+                   class="tab {{ $filter === $key ? 'tab--active' : '' }}" @if ($filter === $key) aria-current="page" @endif>{{ $label }}</a>
             @endforeach
         </nav>
 

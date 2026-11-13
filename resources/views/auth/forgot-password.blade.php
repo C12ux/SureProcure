@@ -1,5 +1,5 @@
 <x-guest-layout>
-    <h1 class="heading-form">Reset your password</h1>
+    <h1 class="heading-form text-jackson">Reset your password</h1>
     <p class="mt-2 text-base text-ink/70">Enter your email and we will send you a link to choose a new password.</p>
 
     <x-auth-session-status class="mt-6" :status="session('status')" />

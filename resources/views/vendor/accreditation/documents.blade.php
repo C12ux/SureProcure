@@ -5,6 +5,8 @@
 @endphp
 
 <x-app-layout>
+    <x-slot name="section">Accreditation</x-slot>
+    <x-slot name="description">Upload and review supporting documents.</x-slot>
     <x-slot name="title">Documents</x-slot>
     <x-slot name="actions"><a href="{{ route('vendor.accreditation.show') }}" class="btn btn-sm btn-outline-dark">Back</a></x-slot>
 

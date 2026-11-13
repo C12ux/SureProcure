@@ -1,7 +1,7 @@
 @props(['status'])
 
 @php
-    $steps = ['Submitted', 'In review', 'Sourcing', 'Bid evaluation', 'Your approval', 'PO issued', 'Closed'];
+    $steps = ['Submitted', 'In review', 'Sourcing', 'Bid evaluation', 'Customer review', 'Approved', 'PO issued', 'Closed'];
     $current = $status->progressIndex();
 @endphp
 

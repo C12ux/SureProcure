@@ -4,19 +4,20 @@
 @endphp
 
 <x-app-layout>
-    <x-slot name="title">{{ $requisition->pr_number }}</x-slot>
+    <x-slot name="section">Invited requests</x-slot>
+    <x-slot name="description"><span class="font-mono">{{ $requisition->pr_number }}</span></x-slot>
+    <x-slot name="title">{{ $requisition->title }}</x-slot>
     <x-slot name="actions">
         <a href="{{ route('vendor.requests.index') }}" class="btn btn-sm btn-outline-dark">All requests</a>
     </x-slot>
 
     <div class="flex flex-wrap items-center gap-3">
-        <h2 class="font-display text-2xl font-bold tracking-tight">{{ $requisition->title }}</h2>
         <span class="badge badge--{{ $tone }}"><span class="badge-dot"></span>{{ $label }}</span>
     </div>
 
-    <div class="mt-6 grid gap-6 lg:grid-cols-3">
+    <div class="mt-6 grid gap-6 xl:grid-cols-3">
 
-        <div class="space-y-6 lg:col-span-2">
+        <div class="space-y-6 xl:col-span-2">
 
             <section class="app-card">
                 <h3 class="app-card-title">Your quotation</h3>

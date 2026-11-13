@@ -1,5 +1,7 @@
 <x-app-layout>
-    <x-slot name="title">Company profile</x-slot>
+    <x-slot name="section">Accreditation</x-slot>
+    <x-slot name="description">Update your company details, contacts, tax information, and products or services.</x-slot>
+    <x-slot name="title">Company information</x-slot>
     <x-slot name="actions"><a href="{{ route('vendor.accreditation.show') }}" class="btn btn-sm btn-outline-dark">Back</a></x-slot>
 
     <form method="POST" action="{{ route('vendor.accreditation.company.save') }}" class="max-w-4xl space-y-6"
