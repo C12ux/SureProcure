@@ -7,12 +7,7 @@
 
 return [
 
-    // Sample data for the bid evaluation card in the hero.
-    'bids' => [
-        ['name' => 'Vendor A', 'technical' => 86, 'commercial' => 91, 'total' => 88.5, 'recommended' => true],
-        ['name' => 'Vendor B', 'technical' => 78, 'commercial' => 84, 'total' => 81,   'recommended' => false],
-        ['name' => 'Vendor C', 'technical' => 90, 'commercial' => 68, 'total' => 79,   'recommended' => false],
-    ],
+    'contact_email' => env('SUREPROCURE_CONTACT_EMAIL'),
 
     'steps' => [
         ['title' => 'Lodge a purchase requisition', 'text' => 'Tell us what you need, how many, your budget and when you need it. Save a draft and submit when it is ready.'],
@@ -22,49 +17,21 @@ return [
         ['title' => 'Approve and issue the purchase order', 'text' => 'Review the form, ask for changes if you need them, then approve. Your officer records the purchase order.'],
     ],
 
-    // accent: 'default' or 'success' (tick color). cta.style: 'light' (filled) or 'outline'. cta.route: a route name.
     'audiences' => [
         [
             'id' => 'for-customers',
             'title' => 'Customers',
-            'intro' => 'Lodge requisitions and follow each one through to the purchase order.',
-            'items' => [
-                'Lodge a purchase requisition in minutes',
-                'Track the status of every request',
-                'See your procurement data in one place',
-                'Download your data whenever you need it',
-            ],
-            'note' => 'Create an account first. An annual subscription is needed to submit requests.',
-            'accent' => 'default',
-            'cta' => ['route' => 'register', 'label' => 'Create a customer account', 'style' => 'light'],
+            'description' => 'Tell your procurement officer what you need, then track the request from submission to purchase order. When the bids are ready, compare them in one evaluation and decide what to approve.',
         ],
         [
             'id' => 'vendors',
             'title' => 'Vendors',
-            'intro' => 'Get accredited, then get invited to quote on customer requests.',
-            'items' => [
-                'Accreditation is by invitation',
-                'Submit your company documents once',
-                'Accredited vendors are included in sourcing',
-                'Your dashboard shows your procurement agent’s contact details and your data',
-            ],
-            'note' => 'Vendors subscribe annually once their accreditation is approved.',
-            'accent' => 'success',
-            'cta' => ['route' => 'login', 'label' => 'Log in with your invitation', 'style' => 'outline'],
+            'description' => 'If invited to apply for accreditation, submit your company documents for review. Once accredited, you can receive invitations to quote on requests that match what you supply.',
         ],
         [
             'id' => 'officers',
             'title' => 'Procurement officers',
-            'intro' => 'Run corporate accounts as the dedicated officer behind every request.',
-            'items' => [
-                'Manage the requisitions assigned to you',
-                'Source vendors and collect quotations',
-                'Score bids on commercial and technical criteria',
-                'Send your recommendation to the customer',
-            ],
-            'note' => 'Officers are accredited before they receive accounts.',
-            'accent' => 'default',
-            'cta' => ['route' => 'login', 'label' => 'Officer log in', 'style' => 'outline'],
+            'description' => 'Manage your assigned requisitions, source accredited suppliers, and assess quotations on technical and commercial criteria. Send the customer a recommendation and record the approved purchase order.',
         ],
     ],
 ];

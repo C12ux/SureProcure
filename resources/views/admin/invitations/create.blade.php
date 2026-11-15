@@ -32,14 +32,14 @@
 
         <div>
             <x-input-label for="email" value="Email address" />
-            <x-text-input id="email" class="mt-1.5" type="email" name="email" :value="old('email')" required autofocus />
+            <x-text-input id="email" class="mt-1.5" type="email" name="email" :value="old('email', $vendorInquiry?->email)" required autofocus />
             <p class="field-hint">Double-check the spelling. The link only works for the account created with this email.</p>
             <x-input-error :messages="$errors->get('email')" />
         </div>
 
         <div x-show="role === 'vendor'" x-cloak>
             <x-input-label for="company_name" value="Company name" />
-            <x-text-input id="company_name" class="mt-1.5" type="text" name="company_name" :value="old('company_name')" x-bind:required="role === 'vendor'" />
+            <x-text-input id="company_name" class="mt-1.5" type="text" name="company_name" :value="old('company_name', $vendorInquiry?->company_name)" x-bind:required="role === 'vendor'" />
             <x-input-error :messages="$errors->get('company_name')" />
         </div>
 

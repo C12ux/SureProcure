@@ -1,24 +1,18 @@
-<section class="workspace-rail text-mist">
-    @include('landing.header')
-
-    <div class="page-container grid items-center gap-9 pb-14 pt-9 lg:grid-cols-12 lg:gap-10 lg:pb-20 lg:pt-14">
-        <div class="lg:col-span-6">
+<section class="landing-hero">
+    <div class="page-container grid items-center gap-12 py-14 lg:grid-cols-[1.1fr_0.9fr] lg:gap-14 lg:py-24">
+        <div class="landing-enter">
             <h1 class="heading-hero">Procurement with confidence</h1>
-            <p class="lead mt-7 max-w-xl text-mist">
+            <p class="lead mt-6 max-w-lg text-mist">
                 Tell us what you need. A dedicated procurement officer sources accredited vendors, compares their bids,
-                and hands you one evaluation to approve.
+                and gives you one evaluation to approve.
             </p>
 
-            <div class="mt-10 flex flex-wrap items-center gap-4">
-                @if (Route::has('register'))
-                    <a href="{{ route('register') }}" class="btn btn-lg btn-light">Create a customer account</a>
-                @endif
-                <a href="#vendors" class="btn btn-lg btn-outline-light">Vendor? See how accreditation works</a>
+            <div class="mt-8 flex flex-wrap items-center gap-3">
+                <a href="{{ route('register') }}" class="btn btn-lg btn-light">Create a customer account</a>
+                <a href="#vendor-inquiry" class="btn btn-lg btn-outline-light">Want to be a Vendor?</a>
             </div>
         </div>
 
-        <div class="lg:col-span-6">
-            @include('landing.bid-evaluation')
-        </div>
+        @include('landing.accredited-vendors')
     </div>
 </section>

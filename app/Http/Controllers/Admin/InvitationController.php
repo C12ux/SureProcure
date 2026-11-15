@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Models\Invitation;
+use App\Models\VendorInquiry;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -28,9 +29,9 @@ class InvitationController extends Controller
         ]);
     }
 
-    public function create(): View
+    public function create(?VendorInquiry $vendorInquiry = null): View
     {
-        return view('admin.invitations.create');
+        return view('admin.invitations.create', compact('vendorInquiry'));
     }
 
     public function store(Request $request): RedirectResponse
