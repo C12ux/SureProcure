@@ -4,11 +4,13 @@ use App\Http\Controllers\Admin\CustomerController as AdminCustomerController;
 use App\Http\Controllers\Admin\InvitationController as AdminInvitationController;
 use App\Http\Controllers\Admin\RequisitionController as AdminRequisitionController;
 use App\Http\Controllers\Admin\VendorController as AdminVendorController;
+use App\Http\Controllers\Admin\VendorInquiryController as AdminVendorInquiryController;
 use App\Http\Controllers\Client\RequisitionController;
 use App\Http\Controllers\Client\ReviewController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\InvitationAcceptController;
+use App\Http\Controllers\LandingController;
 use App\Http\Controllers\Officer\EvaluationController as OfficerEvaluationController;
 use App\Http\Controllers\Officer\QuotationController as OfficerQuotationController;
 use App\Http\Controllers\Officer\RequisitionController as OfficerRequisitionController;
@@ -16,12 +18,18 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Vendor\AccreditationController;
 use App\Http\Controllers\Vendor\OrderController as VendorOrderController;
 use App\Http\Controllers\Vendor\RequestController as VendorRequestController;
+use App\Http\Controllers\VendorInquiryController;
 use App\Http\Middleware\EnsureUserRole;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', LandingController::class)->name('home');
+
+Route::get('/become-a-vendor', function () {
+    return redirect()->to(route('home').'#vendor-inquiry');
+})->name('vendor-inquiries.create');
+Route::post('/become-a-vendor', [VendorInquiryController::class, 'store'])
+    ->middleware('throttle:5,1')
+    ->name('vendor-inquiries.store');
 
 // Every signed-in user lands here; the controller picks the right dashboard for their role.
 Route::get('/dashboard', DashboardController::class)
@@ -117,6 +125,10 @@ Route::middleware(['auth', 'verified', EnsureUserRole::class.':admin'])
         Route::get('/requisitions/{requisition}', [AdminRequisitionController::class, 'show'])->name('requisitions.show');
         Route::post('/requisitions/{requisition}/assign', [AdminRequisitionController::class, 'assign'])->name('requisitions.assign');
         Route::post('/requisitions/{requisition}/transition', [AdminRequisitionController::class, 'transition'])->name('requisitions.transition');
+
+        Route::get('/vendor-inquiries', AdminVendorInquiryController::class)->name('vendor-inquiries.index');
+        Route::get('/vendor-inquiries/{vendorInquiry}/invite', [AdminInvitationController::class, 'create'])
+            ->name('vendor-inquiries.invite');
 
         Route::get('/vendors', [AdminVendorController::class, 'index'])->name('vendors.index');
         Route::get('/vendors/{vendor}', [AdminVendorController::class, 'show'])->name('vendors.show');

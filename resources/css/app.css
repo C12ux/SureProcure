@@ -47,7 +47,6 @@
     .heading-hero    { @apply max-w-3xl font-display text-[clamp(2.5rem,5.6vw,4.6rem)] font-extrabold leading-[1.02] tracking-[-0.025em] text-mist-50; }
     .heading-section { @apply font-display text-4xl font-extrabold leading-tight tracking-[-0.02em] sm:text-5xl; }
     .heading-column  { @apply font-display text-3xl font-bold tracking-tight text-mist-50; }
-    .heading-step    { @apply font-display text-2xl font-bold tracking-tight; }
     .heading-form    { @apply font-display text-3xl font-extrabold tracking-tight sm:text-4xl; }
     .lead            { @apply text-lg leading-relaxed; }
 
@@ -59,27 +58,10 @@
     .field-check { @apply h-4 w-4 rounded border-ink/30 text-jackson focus:ring-jackson; }
     .auth-link   { @apply font-semibold text-jackson underline decoration-jackson/30 underline-offset-4 hover:decoration-jackson; }
 
-    /* ---- Bid evaluation sample card (landing) ---- */
-    .eval-card        { @apply rounded-3xl bg-mist-50 p-6 text-ink shadow-2xl shadow-ink/40 sm:p-8; }
-    .chip-status      { @apply inline-flex shrink-0 items-center gap-2 rounded-full bg-mist-200 px-3 py-1.5 text-xs font-semibold; }
-    .chip-recommended { @apply inline-flex items-center gap-1 rounded-full bg-success px-2 py-0.5 text-xs font-bold text-ink; }
-    .bar-track        { @apply mt-3 h-1.5 overflow-hidden rounded-full bg-mist-200; }
-    .bar-fill         { @apply h-full rounded-full bg-jackson/45; }
-    .bar-fill--best   { @apply bg-jackson; }
-
-    /* ---- How it works (landing) ---- */
-    .step-row         { @apply flex gap-6 border-t border-ink/15 py-9 sm:gap-10; }
-    .step-row:last-child { @apply border-b; }
-    .step-number      { @apply w-10 shrink-0 font-display text-4xl font-extrabold tabular-nums text-jackson sm:w-14 sm:text-5xl; }
-
-    /* ---- Audience columns (landing) ---- */
-    .audience-col     { @apply py-16 lg:px-12 lg:py-24; }
-    .audience-col:first-child { @apply lg:pl-0; }
-    .audience-col:last-child  { @apply lg:pr-0; }
-    .audience-list    { @apply mt-8 space-y-3.5 text-base; }
-    .audience-check   { @apply mt-1 h-4 w-4 text-mist-50; }
-    .audience-check--success { @apply text-success; }
-    .audience-note    { @apply mt-8 text-sm leading-relaxed text-mist/80; }
+    /* ---- Score and completion bars ---- */
+    .bar-track      { @apply mt-3 h-1.5 overflow-hidden rounded-full bg-mist-200; }
+    .bar-fill       { @apply h-full rounded-full bg-jackson/45; }
+    .bar-fill--best { @apply bg-jackson; }
 
     /* =================================================================
        APP (signed-in area)
@@ -143,7 +125,7 @@
     .progress-step--current { @apply border-jackson font-semibold text-jackson; }
 }
 
-/* The one motion on the public page: score bars fill in once on load. */
+/* Score and completion bars fill in on load. */
 .bar-fill {
     transform-origin: left center;
     animation: bar-grow 1000ms cubic-bezier(.2, .8, .2, 1) both;
@@ -209,4 +191,66 @@
     .progress-step--done { background: #e9f5d8; color: #365d12; }
     .progress-step--current { background: #eeecfc; color: #282391; }
     .progress { @apply gap-2; }
+}
+
+.landing-hero,
+.landing-audiences {
+    background-image: radial-gradient(ellipse at 88% 20%, #342f7b 0%, transparent 58%);
+}
+
+.landing-audience-row { position: relative; }
+
+.landing-process > li:not(:last-child)::before {
+    content: "";
+    position: absolute;
+    left: 1.1875rem;
+    top: 1rem;
+    bottom: -1rem;
+    width: 2px;
+    background: #dddfeb;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .landing-enter { animation: landing-enter 580ms cubic-bezier(.2, .75, .3, 1) both; }
+    .landing-enter-later { animation-delay: 120ms; }
+    .landing-vendor-row { transition: transform 180ms ease-out; }
+    .landing-vendor-row:hover { transform: translateX(4px); }
+
+    @supports (animation-timeline: view()) and (animation-range: entry) {
+        .landing-reveal {
+            animation: landing-reveal linear both;
+            animation-timeline: view();
+            animation-range: entry 0% entry 85%;
+        }
+
+        .landing-audience-row { view-timeline-name: --landing-audience-row; }
+
+        .landing-audience-row::after {
+            content: "";
+            position: absolute;
+            inset: auto 0 -1px;
+            height: 1px;
+            background: linear-gradient(90deg, #cec8ff, #cec8ff66 72%, transparent);
+            pointer-events: none;
+            transform-origin: left center;
+            animation: landing-audience-divider linear both;
+            animation-timeline: --landing-audience-row;
+            animation-range: entry 0% entry 95%;
+        }
+    }
+}
+
+@keyframes landing-enter {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes landing-reveal {
+    from { transform: translateY(12px); }
+    to { transform: translateY(0); }
+}
+
+@keyframes landing-audience-divider {
+    from { transform: scaleX(0); }
+    to { transform: scaleX(1); }
 }

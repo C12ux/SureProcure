@@ -29,6 +29,7 @@ return [
         ['label' => 'Requests', 'route' => 'admin.requisitions.index', 'icon' => 'document', 'match' => 'admin.requisitions.*'],
         ['label' => 'Vendors', 'route' => 'admin.vendors.index', 'icon' => 'shield', 'match' => 'admin.vendors.*'],
         ['label' => 'Customers', 'route' => 'admin.customers.index', 'icon' => 'building', 'match' => 'admin.customers.*'],
+        ['label' => 'Vendor inquiries', 'route' => 'admin.vendor-inquiries.index', 'icon' => 'mail', 'match' => 'admin.vendor-inquiries.*'],
         ['label' => 'Invitations', 'route' => 'admin.invitations.index', 'icon' => 'mail', 'match' => 'admin.invitations.*'],
     ],
 ];
