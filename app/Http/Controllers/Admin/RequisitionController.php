@@ -65,6 +65,7 @@ class RequisitionController extends Controller
         $requisition->load(['organization.users', 'requester', 'officer', 'category', 'items', 'statusHistory.changedBy']);
 
         $transitions = collect($requisition->status->allowedTransitions())
+            ->reject(fn (PrStatus $to) => $to === PrStatus::PoIssued)
             ->filter(fn (PrStatus $to) => Gate::allows('transition', [$requisition, $to]))
             ->values();
 
@@ -121,7 +122,7 @@ class RequisitionController extends Controller
         $this->guard($requisition);
 
         $data = $request->validate([
-            'to' => ['required', Rule::enum(PrStatus::class)],
+            'to' => ['required', Rule::enum(PrStatus::class)->except([PrStatus::PoIssued])],
             'note' => ['nullable', 'string', 'max:1000'],
         ]);
 

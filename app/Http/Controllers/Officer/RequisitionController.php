@@ -217,15 +217,27 @@ class RequisitionController extends Controller
     /** After the customer approves: raise the purchase order for the awarded quotation. */
     public function issuePo(Request $request, PurchaseRequisition $requisition): RedirectResponse
     {
-        Gate::authorize('create', [PurchaseOrder::class, $requisition]);
+        return DB::transaction(function () use ($request, $requisition): RedirectResponse {
+            $requisition = PurchaseRequisition::query()->lockForUpdate()->findOrFail($requisition->getKey());
+            Gate::authorize('view', $requisition);
 
-        $quotation = $requisition->bidEvaluation?->recommendedQuotation;
+            if ($requisition->status === PrStatus::PoIssued && $requisition->purchaseOrders()->exists()) {
+                return redirect()->route('officer.requisitions.show', $requisition)
+                    ->with('success', 'A purchase order has already been issued for this request.');
+            }
 
-        if (! $quotation || $quotation->status !== QuotationStatus::Awarded) {
-            return back()->with('warning', 'There is no awarded quotation to raise a purchase order from.');
-        }
+            Gate::authorize('create', [PurchaseOrder::class, $requisition]);
 
-        $po = DB::transaction(function () use ($requisition, $quotation, $request) {
+            if ($requisition->purchaseOrders()->where('status', '!=', PoStatus::Cancelled->value)->exists()) {
+                return back()->with('warning', 'This request already has a purchase order. Review it before proceeding.');
+            }
+
+            $quotation = $requisition->bidEvaluation?->recommendedQuotation;
+
+            if (! $quotation || $quotation->status !== QuotationStatus::Awarded) {
+                return back()->with('warning', 'There is no awarded quotation to raise a purchase order from.');
+            }
+
             $po = PurchaseOrder::create([
                 'purchase_requisition_id' => $requisition->id,
                 'quotation_id' => $quotation->id,
@@ -237,9 +249,8 @@ class RequisitionController extends Controller
 
             $requisition->transitionTo(PrStatus::PoIssued, $request->user(), "Purchase order {$po->po_number} issued to {$quotation->vendor->name}");
 
-            return $po;
+            return redirect()->route('officer.requisitions.show', $requisition)
+                ->with('success', "Purchase order {$po->po_number} issued.");
         });
-
-        return redirect()->route('officer.requisitions.show', $requisition)->with('success', "Purchase order {$po->po_number} issued.");
     }
 }
